@@ -1,0 +1,24 @@
+[package]
+name = "bevy_physx"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+#bevy
+bevy = { git = "https://github.com/bevyengine/bevy" }
+
+#physx
+physx = "0.16.1"
+physx-sys = "0.8.2"
+
+#utils
+slotmap = "1.0"
+
+# [profile.debug.package.physx-sys]
+# debug = false
+
+[profile.release.package.physx-sys]
+debug = false
