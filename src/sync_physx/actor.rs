@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use physx::{prelude::*, scene::Scene, traits::Class};
 
-use crate::{PhysxRes, PxDynamicRigidBodyHandle};
+use crate::{PhysxRes, PxDynamicRigidBodyHandle, trans_to_physx};
 
 
 
@@ -33,14 +33,3 @@ pub fn new_dyn_actor(
 }
 
 
-fn trans_to_physx(
-    trans: Transform,
-) -> PxTransform {
-    let mut px_trans = PxTransform::default();
-
-    *px_trans.translation_mut() = PxVec3::new(trans.translation.x, trans.translation.y, trans.translation.z);
-
-    *px_trans.rotation_mut() = PxQuat::new(trans.rotation.x, trans.rotation.y, trans.rotation.z, trans.rotation.w);
-
-    return px_trans;
-}

@@ -1,4 +1,3 @@
-use bevy::prelude::Vec3;
 use physx::prelude::*;
 use physx_sys::{PxFilterFlag, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxPairFlag};
 
@@ -100,18 +99,3 @@ impl AdvanceCallback<PxArticulationLink, PxRigidDynamic> for OnAdvance {
     }
 }
 
-
-#[allow(dead_code)]
-pub fn physx_pose(x: f32, y: f32, z: f32) -> physx::math::PxTransform{
-    return physx::math::PxTransform::from_translation(&physx::math::PxVec3::new(x, y, z));
-}
-
-#[allow(dead_code)]
-pub fn physx_vec3(vec: Vec3) -> physx::math::PxVec3{
-    return physx::math::PxVec3::new(vec.x, vec.y, vec.z);
-}
-
-#[allow(dead_code)]
-pub fn vec3_from_pxvec3(vec: physx_sys::PxVec3) -> Vec3{
-    return Vec3::new(vec.x, vec.y, vec.z);
-}
