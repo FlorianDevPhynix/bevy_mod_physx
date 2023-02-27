@@ -20,9 +20,9 @@ pub mod handles;
 pub use handles::*;
 
 
-pub struct PhysxPlugin;
+pub struct PhysXPlugin;
 
-impl Plugin for PhysxPlugin {
+impl Plugin for PhysXPlugin {
     fn build(&self, app: &mut App) {
         app 
             //setup physx
@@ -30,26 +30,26 @@ impl Plugin for PhysxPlugin {
 
             //sync Physx
             .add_systems((
-                new_static_actor.in_base_set(PhysxPipelineSet::BeforeFlush), 
-                new_dyn_actor.in_base_set(PhysxPipelineSet::BeforeFlush), 
-                new_articulation.in_base_set(PhysxPipelineSet::BeforeFlush), 
+                new_static_actor.in_base_set(PhysXPipelineSet::BeforeFlush), 
+                new_dyn_actor.in_base_set(PhysXPipelineSet::BeforeFlush), 
+                new_articulation.in_base_set(PhysXPipelineSet::BeforeFlush), 
 
-                apply_system_buffers.in_base_set(PhysxPipelineSet::Flush), //clear commands for new components
+                apply_system_buffers.in_base_set(PhysXPipelineSet::Flush), //clear commands for new components
 
-                new_articulation_joint.in_base_set(PhysxPipelineSet::AfterFlush),
-                new_collider.in_base_set(PhysxPipelineSet::AfterFlush),
+                new_articulation_joint.in_base_set(PhysXPipelineSet::AfterFlush),
+                new_collider.in_base_set(PhysXPipelineSet::AfterFlush),
                 //px_apply_forces, 
                 //px_set_joints
             ).before(px_step_simulation).chain())
 
             //run physx
-            .add_system(px_step_simulation.in_base_set(PhysxPipelineSet::RunPhysx) )
+            .add_system(px_step_simulation.in_base_set(PhysXPipelineSet::RunPhysx) )
 
             //sync bevy
             .add_systems(( //todo: run if changed
                 sync_bevy::transform::px_sync_transforms, 
                 sync_bevy::velocity::px_write_velocitys
-            ).in_base_set(PhysxPipelineSet::SyncBevy).after(px_step_simulation).chain())
+            ).in_base_set(PhysXPipelineSet::SyncBevy).after(px_step_simulation).chain())
             ;
 
     }
@@ -58,9 +58,9 @@ impl Plugin for PhysxPlugin {
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 #[system_set(base)]
-enum PhysxPipelineSet {
+enum PhysXPipelineSet {
     BeforeFlush, //
-    Flush,       //  Sync Physx
+    Flush,       //  Sync PhysX
     AfterFlush,  //
     RunPhysx,
     SyncBevy,
