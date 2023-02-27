@@ -28,8 +28,9 @@ impl Plugin for PhysxPlugin {
             //setup physx
             .add_startup_system(setup_physx)
 
-            //Sync Physx
+            //sync Physx
             .add_systems((
+                new_static_actor.in_base_set(PhysxPipelineSet::BeforeFlush), 
                 new_dyn_actor.in_base_set(PhysxPipelineSet::BeforeFlush), 
                 new_articulation.in_base_set(PhysxPipelineSet::BeforeFlush), 
 
@@ -58,10 +59,9 @@ impl Plugin for PhysxPlugin {
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 #[system_set(base)]
 enum PhysxPipelineSet {
-    /// Runs before all other members of this set.
-    BeforeFlush, 
-    Flush,
-    AfterFlush,
+    BeforeFlush, //
+    Flush,       //  Sync Physx
+    AfterFlush,  //
     RunPhysx,
     SyncBevy,
 }
