@@ -4,8 +4,6 @@ use physx::prelude::*;
 use physx::scene::Scene;
 use physx::{physics::PhysicsFoundationBuilder, foundation::DefaultAllocator};
 
-use slotmap::{SlotMap, new_key_type};
-
 mod helpers;
 use helpers::*;
 
@@ -17,6 +15,9 @@ pub use sync_physx::*;
 
 pub mod sync_bevy;
 pub use sync_bevy::*;
+
+pub mod handles;
+pub use handles::*;
 
 
 pub struct PhysxPlugin;
@@ -76,28 +77,6 @@ unsafe impl Send for PhysxRes {}
 unsafe impl Sync for PhysxRes {}
 
 
-#[derive(Default)]
-pub struct Handels {
-    // pub static_actors: SlotMap<RigidStaticHandle, *mut physx_sys::PxRigidStatic>,
-    pub dynamic_actors: SlotMap<RigidDynamicHandle, *mut physx_sys::PxRigidDynamic>,
-    pub articulation_links: SlotMap<ArticulationLinkHandle, *mut physx_sys::PxArticulationLink>,
-}
-
-
-new_key_type! {
-    pub struct RigidStaticHandle;
-    pub struct RigidDynamicHandle;
-    pub struct ArticulationLinkHandle;
-}
-
-
-#[derive(Component)]
-pub struct PxStaticRigidBodyHandle(pub RigidStaticHandle);
-#[derive(Component)]
-pub struct PxDynamicRigidBodyHandle(pub RigidDynamicHandle);
-#[derive(Component)]
-pub struct PxArticulationLinkHandle(pub ArticulationLinkHandle);
-
 
 const PHYSXSTEP: f32 = 1.0 / 60.0;
 
@@ -146,7 +125,7 @@ fn setup_physx(
             gravity: PxVec3::new(0.0, -9.81, 0.0),
             on_advance: Some(OnAdvance),
             simulation_filter_shader: FilterShaderDescriptor::Custom(costum_filter_shader),
-            thread_count: std::thread::available_parallelism().unwrap().get() as u32, //todo get cpu count
+            thread_count: std::thread::available_parallelism().unwrap().get() as u32,
             ..SceneDescriptor::new(()) 
         })
         .unwrap();
