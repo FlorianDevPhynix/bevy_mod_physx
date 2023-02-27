@@ -4,5 +4,5 @@ pub use actor::*;
 pub mod collider;
 pub use collider::*;
 
-pub mod joint;
-pub use joint::*; 
+pub mod articulation; 
+pub use articulation::*; 
