@@ -54,3 +54,56 @@ pub fn new_static_actor(
     }
 
 }
+
+
+
+//static ground plane
+#[derive(Component)]
+pub struct GroundPlane{
+    normal: Vec3,
+    offset: f32,
+}
+
+impl GroundPlane{
+    pub fn new(normal: Vec3, offset: f32) -> Self{
+        Self{
+            normal,
+            offset,
+        }
+    }
+}
+
+impl Default for GroundPlane{
+    fn default() -> Self{
+        Self{
+            normal: Vec3::new(0.0, 1.0, 0.0),
+            offset: 0.0,
+        }
+    }
+}
+    
+    
+pub fn new_ground_plane(
+    mut commands: Commands,
+    mut physx: ResMut<PhysXRes>,
+    query: Query<Entity, Added<GroundPlane>>,
+){ 
+
+    for e in query.iter() {
+
+
+        let mut material = physx.foundation.physics_mut().create_material(0.4, 0.4, 0.4, ()).unwrap();
+
+        let mut ground_plane = physx.foundation.physics_mut()
+            .create_plane(PxVec3::new(0.0, 1.0, 0.0), 0.0, material.as_mut(), ())
+            .unwrap();
+            
+
+        let handle = physx.handles.rigid_actors.insert(ground_plane.as_mut().as_mut_ptr());
+        commands.entity(e).insert(PxRigidActorHandle(handle));
+
+        physx.scene.add_static_actor(ground_plane);
+
+    }
+
+}

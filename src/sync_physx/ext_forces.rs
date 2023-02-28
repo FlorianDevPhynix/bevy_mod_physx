@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use physx::prelude::*;
 
 use crate::{helpers::physx_vec3, PhysXRes, PxRigidDynamic, DynamicActor, PxRigidActorHandle};
-
+use crate::sync_physx::articulations::ArticulationLink;
 
 
 
@@ -60,7 +60,7 @@ impl PxExternalForce {
 //todo: maybe add change filter
 pub fn px_apply_forces(
     physx: Res<PhysXRes>,
-    mut query: Query<(&PxRigidActorHandle, &mut PxExternalForce), Or<(With<DynamicActor>, With<crate::sync_physx::articulation::ArticulationLink>)>>,
+    mut query: Query<(&PxRigidActorHandle, &mut PxExternalForce), Or<(With<DynamicActor>, With<ArticulationLink>)>>,
 
     // time: Res<Time>,
 ){

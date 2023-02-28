@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use physx::prelude::*;
 
 use crate::{PhysXRes, PxRigidDynamic, PxRigidActorHandle, DynamicActor};
-
+use crate::sync_physx::articulations::ArticulationLink;
 
 
 
@@ -11,7 +11,7 @@ use crate::{PhysXRes, PxRigidDynamic, PxRigidActorHandle, DynamicActor};
 //positions
 pub fn px_sync_transforms(   
     physx: Res<PhysXRes>,
-    mut query: Query<(&PxRigidActorHandle, &mut Transform), Or<(With<DynamicActor>, With<crate::sync_physx::articulation::ArticulationLink>)>>,
+    mut query: Query<(&PxRigidActorHandle, &mut Transform), Or<(With<DynamicActor>, With<ArticulationLink>)>>,
     // mut query_static_transforms: Query<(&PhysXStaticRigidBodyHandle, &mut Transform)>,
 ){
     
@@ -26,7 +26,7 @@ pub fn px_sync_transforms(
         let global_roation = actor.get_global_rotation();
         let rotation = Quat::from_xyzw(global_roation.x(), global_roation.y(), global_roation.z(), global_roation.w());
 
-        *transform = Transform::from_translation(position).with_rotation(rotation);
+        *(transform.bypass_change_detection()) = Transform::from_translation(position).with_rotation(rotation); //should this be bypass_change_detection?
         
     });
 

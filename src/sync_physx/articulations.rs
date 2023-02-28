@@ -2,12 +2,12 @@ use bevy::prelude::*;
 use physx::{prelude::{ArticulationJointType, ArticulationAxis, ArticulationMotion, ArticulationDriveType}, traits::Class};
 use physx_sys::{PxPhysics_createAggregate_mut, PxRigidActor, PxArticulationLink};
  
-use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle};
+use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle, PxArticulationHandle};
 
 
 
 #[derive(Component)]
-pub struct Articulation{
+pub struct Articulation {
     links: Vec<(Entity, Option<Entity>)>, //link, parent
 }
 
@@ -45,15 +45,18 @@ pub struct ArticulationLink{
 pub fn new_articulation(
     mut commands: Commands,
     mut physx: ResMut<PhysXRes>,
-    query: Query<&Articulation, Added<Articulation>>,
+    query: Query<(Entity, &Articulation), Added<Articulation>>,
     link_q: Query<&ArticulationLink>,
 ) {
 
-    for articulation in query.iter() {
+    for (e, articulation) in query.iter() {
 
         unsafe {
 
             let px_articulation = physx_sys::PxPhysics_createArticulationReducedCoordinate_mut(physx.foundation.physics_mut().as_mut_ptr()) as *mut physx_sys::PxArticulationBase;
+ 
+            let handle = physx.handles.articulations.insert(px_articulation);
+            commands.entity(e).insert(PxArticulationHandle(handle));
 
             let mut map = std::collections::HashMap::new();
 

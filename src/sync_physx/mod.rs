@@ -1,11 +1,13 @@
-pub mod actor;
-pub use actor::*;
+#![allow(dead_code)]
 
-pub mod collider;
-pub use collider::*;
+pub mod actors;
+pub use actors::*;
 
-pub mod ext_force;
-pub use ext_force::*;
+pub mod colliders;
+pub use colliders::*;
 
-pub mod articulation; 
-pub use articulation::*; 
+pub mod ext_forces;
+pub use ext_forces::*;
+
+pub mod articulations; 
+pub use articulations::*; 

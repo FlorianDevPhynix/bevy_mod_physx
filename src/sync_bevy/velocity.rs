@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use physx::prelude::*;
 
 use crate::{PhysXRes, PxRigidActorHandle, PxRigidDynamic, DynamicActor};
-
+use crate::sync_physx::articulations::ArticulationLink;
 
 
 
@@ -32,7 +32,7 @@ impl PxVelocity {
 
 pub fn px_write_velocitys(
     physx: Res<PhysXRes>,
-    mut query: Query<(&PxRigidActorHandle, &mut PxVelocity), Or<(With<DynamicActor>, With<crate::sync_physx::articulation::ArticulationLink>)>>,
+    mut query: Query<(&PxRigidActorHandle, &mut PxVelocity), Or<(With<DynamicActor>, With<ArticulationLink>)>>,
     // time: Res<Time>,
 ){
 

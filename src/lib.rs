@@ -32,9 +32,10 @@ impl Plugin for PhysXPlugin {
 
             //sync Physx
             .add_systems((
+                new_ground_plane,
                 new_static_actor, 
                 new_dyn_actor, 
-                new_articulation, 
+                new_articulation, //todo add articulation to scene after setting joints
             ).in_base_set(PhysXPipelineSet::BeforeFlush).chain())
 
             .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush)) //clear commands for new components
@@ -52,7 +53,7 @@ impl Plugin for PhysXPlugin {
             //sync bevy
             .add_systems(( //todo: run if changed
                 sync_bevy::transform::px_sync_transforms, 
-                // sync_bevy::velocity::px_write_velocitys
+                sync_bevy::velocity::px_write_velocitys
             ).in_base_set(PhysXPipelineSet::SyncBevy).after(PhysXPipelineSet::RunPhysx))
             ;
 
@@ -124,7 +125,7 @@ fn setup_physx(
     };
 
 
-    let mut scene: Owner<PxScene> = foundation
+    let scene: Owner<PxScene> = foundation
         .create(SceneDescriptor {
             gravity: PxVec3::new(0.0, -9.81, 0.0),
             on_advance: Some(OnAdvance),
@@ -137,16 +138,6 @@ fn setup_physx(
 
 
     let handles = Handels::default();
-
-    {//spawn ground plane
-        let mut material = foundation.physics_mut().create_material(0.4, 0.4, 0.4, ()).unwrap();
-
-        let ground_plane = foundation.physics_mut()
-            .create_plane(PxVec3::new(0.0, 1.0, 0.0), 0.0, material.as_mut(), ())
-            .unwrap();
-
-        scene.add_static_actor(ground_plane);
-    }
 
     commands.insert_resource(PhysXRes{ foundation, scene, handles });
 }
