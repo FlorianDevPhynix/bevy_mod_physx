@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use physx::{prelude::{ArticulationJointType, ArticulationAxis, ArticulationMotion, ArticulationDriveType}, traits::Class};
-use physx_sys::{PxPhysics_createAggregate_mut};
+use physx_sys::{PxPhysics_createAggregate_mut, PxRigidActor, PxArticulationLink};
  
-use crate::{PhysxRes, trans_to_physx, PxArticulationLinkHandle};
+use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle};
 
 
 
@@ -44,7 +44,7 @@ pub struct ArticulationLink{
 
 pub fn new_articulation(
     mut commands: Commands,
-    mut physx: ResMut<PhysxRes>,
+    mut physx: ResMut<PhysXRes>,
     query: Query<&Articulation, Added<Articulation>>,
     link_q: Query<&ArticulationLink>,
 ) {
@@ -73,8 +73,8 @@ pub fn new_articulation(
                 let px_link = physx_sys::PxArticulationBase_createLink_mut(px_articulation, parent, pose.as_ptr());
 
                 //handle
-                let handle = physx.handles.articulation_links.insert(px_link);
-                commands.entity(link.0).insert(PxArticulationLinkHandle(handle));
+                let handle = physx.handles.rigid_actors.insert(px_link as *mut PxRigidActor);
+                commands.entity(link.0).insert(PxRigidActorHandle(handle));
 
 
                 map.insert(link.0, px_link);
@@ -212,8 +212,8 @@ impl ArticulationJoint {
 
 
 pub fn new_articulation_joint(
-    physx: ResMut<PhysxRes>,
-    query: Query<(&ArticulationJoint, &PxArticulationLinkHandle), Added<ArticulationJoint>>,
+    physx: ResMut<PhysXRes>,
+    query: Query<(&ArticulationJoint, &PxRigidActorHandle), Added<ArticulationJoint>>,
 ) {
 
     unsafe {
@@ -221,8 +221,8 @@ pub fn new_articulation_joint(
         for (joint, handle) in query.iter() {
 
             //get joint from link at set based on joint type
-            let px_link = *physx.handles.articulation_links.get(handle.0).unwrap();
-            let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link);
+            let px_link = *physx.handles.rigid_actors.get(handle.0).unwrap();
+            let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link as *const PxArticulationLink);
 
             //pose
             physx_sys::PxArticulationJointBase_setParentPose_mut(px_joint, trans_to_physx(joint.parent_pose).as_ptr());

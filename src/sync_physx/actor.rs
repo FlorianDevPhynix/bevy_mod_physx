@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use physx::{prelude::*, scene::Scene, traits::Class};
 
-use crate::{PhysxRes, PxDynamicRigidBodyHandle, trans_to_physx, PxStaticRigidBodyHandle};
+use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle};
 
 
 
@@ -12,7 +12,7 @@ pub struct DynamicActor;
 
 pub fn new_dyn_actor(
     mut commands: Commands,
-    mut physx: ResMut<PhysxRes>,
+    mut physx: ResMut<PhysXRes>,
     query: Query<(Entity, &Transform), Added<DynamicActor>>,
 ){ 
 
@@ -20,14 +20,15 @@ pub fn new_dyn_actor(
 
         let mut dyn_actor = physx.foundation.physics_mut().create_dynamic(&trans_to_physx(*trans), ()).unwrap();
 
-        let handle = physx.handles.dynamic_actors.insert(dyn_actor.as_mut().as_mut_ptr());
-        commands.entity(e).insert(PxDynamicRigidBodyHandle(handle));
+        let handle = physx.handles.rigid_actors.insert(dyn_actor.as_mut().as_mut_ptr());
+        commands.entity(e).insert(PxRigidActorHandle(handle));
 
         physx.scene.add_dynamic_actor(dyn_actor);
 
     }
 
 }
+
 
 
 //static
@@ -37,7 +38,7 @@ pub struct StaticActor;
 
 pub fn new_static_actor(
     mut commands: Commands,
-    mut physx: ResMut<PhysxRes>,
+    mut physx: ResMut<PhysXRes>,
     query: Query<(Entity, &Transform), Added<StaticActor>>,
 ){ 
 
@@ -45,8 +46,8 @@ pub fn new_static_actor(
 
         let mut static_actor = physx.foundation.physics_mut().create_static(trans_to_physx(*trans), ()).unwrap();
 
-        let handle = physx.handles.static_actors.insert(static_actor.as_mut().as_mut_ptr());
-        commands.entity(e).insert(PxStaticRigidBodyHandle(handle));
+        let handle = physx.handles.rigid_actors.insert(static_actor.as_mut().as_mut_ptr());
+        commands.entity(e).insert(PxRigidActorHandle(handle));
 
         physx.scene.add_static_actor(static_actor);
 

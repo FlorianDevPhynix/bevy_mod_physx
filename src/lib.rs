@@ -20,6 +20,8 @@ pub mod handles;
 pub use handles::*;
 
 
+
+
 pub struct PhysXPlugin;
 
 impl Plugin for PhysXPlugin {
@@ -30,26 +32,28 @@ impl Plugin for PhysXPlugin {
 
             //sync Physx
             .add_systems((
-                new_static_actor.in_base_set(PhysXPipelineSet::BeforeFlush), 
-                new_dyn_actor.in_base_set(PhysXPipelineSet::BeforeFlush), 
-                new_articulation.in_base_set(PhysXPipelineSet::BeforeFlush), 
+                new_static_actor, 
+                new_dyn_actor, 
+                new_articulation, 
+            ).in_base_set(PhysXPipelineSet::BeforeFlush).chain())
 
-                apply_system_buffers.in_base_set(PhysXPipelineSet::Flush), //clear commands for new components
+            .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush)) //clear commands for new components
 
-                new_articulation_joint.in_base_set(PhysXPipelineSet::AfterFlush),
-                new_collider.in_base_set(PhysXPipelineSet::AfterFlush),
+            .add_systems((
+                new_articulation_joint,
+                new_collider,
                 //px_apply_forces, 
                 //px_set_joints
-            ).before(px_step_simulation).chain())
+            ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 
             //run physx
-            .add_system(px_step_simulation.in_base_set(PhysXPipelineSet::RunPhysx) )
+            .add_system(px_step_simulation.in_base_set(PhysXPipelineSet::RunPhysx).after(PhysXPipelineSet::AfterFlush) )
 
             //sync bevy
             .add_systems(( //todo: run if changed
                 sync_bevy::transform::px_sync_transforms, 
-                sync_bevy::velocity::px_write_velocitys
-            ).in_base_set(PhysXPipelineSet::SyncBevy).after(px_step_simulation).chain())
+                // sync_bevy::velocity::px_write_velocitys
+            ).in_base_set(PhysXPipelineSet::SyncBevy).after(PhysXPipelineSet::RunPhysx))
             ;
 
     }
@@ -68,13 +72,13 @@ enum PhysXPipelineSet {
 
 
 #[derive(Resource)]
-pub struct PhysxRes {
+pub struct PhysXRes {
     pub foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
     pub scene: Owner<PxScene>,
     pub handles: Handels,
 }
-unsafe impl Send for PhysxRes {}
-unsafe impl Sync for PhysxRes {}
+unsafe impl Send for PhysXRes {}
+unsafe impl Sync for PhysXRes {}
 
 
 
@@ -82,7 +86,7 @@ const PHYSXSTEP: f32 = 1.0 / 60.0;
 
 //run physx
 fn px_step_simulation(   
-    mut physx: ResMut<PhysxRes>,
+    mut physx: ResMut<PhysXRes>,
     time: Res<Time>,
     mut accumilator: Local<f32>,
 ){
@@ -144,7 +148,7 @@ fn setup_physx(
         scene.add_static_actor(ground_plane);
     }
 
-    commands.insert_resource(PhysxRes{ foundation, scene, handles });
+    commands.insert_resource(PhysXRes{ foundation, scene, handles });
 }
 
 
