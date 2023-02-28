@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::*, traits::Class};
 
 
+use crate::GroundPlane;
 use crate::PhysXRes;
 use crate::PxRigidActorHandle;
 use crate::trans_to_physx;
@@ -18,7 +19,9 @@ pub enum PxCollider {
 
 pub fn new_collider(
     mut physx: ResMut<PhysXRes>,
-    query: Query<(&PxCollider, &PxRigidActorHandle), Added<PxCollider>>,
+    query: Query<(Entity, &PxCollider, Option<&PxRigidActorHandle>), (Added<PxCollider>, Without<GroundPlane>)>,
+    parent_q: Query<(&Parent, &Transform)>,
+    actor_handle_q: Query<&PxRigidActorHandle>,
 ){ 
 
 
@@ -27,7 +30,19 @@ pub fn new_collider(
         let px_material = physx_sys::PxPhysics_createMaterial_mut(physx.foundation.physics_mut().as_mut_ptr(),0.6, 0.6, 0.4);
 
 
-        for (collider, handle) in query.iter() {
+        for (e, collider, opt_handle) in query.iter() {
+
+            let mut opt_collider_offset = None;
+
+            let handle = match opt_handle {
+                Some(some) => some, 
+                None => { //child collider, todo: remove unwrap
+                    let (parent, collider_offset) = parent_q.get(e).unwrap();
+                    opt_collider_offset = Some(collider_offset);
+                    let parent_handle = actor_handle_q.get(parent.get()).unwrap();
+                    parent_handle
+                },
+            };
 
             
             match collider {
@@ -37,8 +52,11 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
+                    if let Some(collider_offset) = opt_collider_offset {
+                        physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(*collider_offset).as_ptr());
+                    }
                 },
                 PxCollider::Sphere { radius } => {
 
@@ -46,8 +64,11 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
+                    if let Some(collider_offset) = opt_collider_offset {
+                        physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(*collider_offset).as_ptr());
+                    }
                 },
                 PxCollider::Capsule { radius, depth } => {
                         
@@ -60,7 +81,11 @@ pub fn new_collider(
                     //rotate capsule upright to fit with bevy's coordinate system
                     let local_pose = Transform::from_rotation(Quat::from_rotation_z((90.0 as f32).to_radians()));
 
-                    physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(local_pose).as_ptr());
+                    if let Some(collider_offset) = opt_collider_offset {
+                        physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(collider_offset.mul_transform(local_pose)).as_ptr());
+                    } else {
+                        physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(local_pose).as_ptr());
+                    }
                 },
     
             }

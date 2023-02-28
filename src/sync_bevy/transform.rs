@@ -25,7 +25,7 @@ pub fn px_sync_transforms(
         let global_roation = actor.get_global_rotation();
         let rotation = Quat::from_xyzw(global_roation.x(), global_roation.y(), global_roation.z(), global_roation.w());
 
-        *(transform.bypass_change_detection()) = Transform::from_translation(position).with_rotation(rotation); //should this be bypass_change_detection?
+        *transform = Transform::from_translation(position).with_rotation(rotation);
         
     });
 

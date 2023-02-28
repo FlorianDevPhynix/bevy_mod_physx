@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use physx::prelude::*;
+use physx::traits::Class;
 use physx::scene::Scene;
 use physx::{physics::PhysicsFoundationBuilder, foundation::DefaultAllocator};
 
@@ -18,6 +19,9 @@ pub use sync_bevy::*;
 
 pub mod handles;
 pub use handles::*;
+
+pub mod debug_render;
+pub use debug_render::*;
 
 
 
@@ -75,9 +79,9 @@ enum PhysXPipelineSet {
 
 #[derive(Resource)]
 pub struct PhysXRes {
-    pub foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
-    pub scene: Owner<PxScene>,
-    pub handles: Handels,
+    foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
+    scene: Owner<PxScene>,
+    handles: Handels,
 }
 unsafe impl Send for PhysXRes {}
 unsafe impl Sync for PhysXRes {}
@@ -126,7 +130,7 @@ fn setup_physx(
     };
 
 
-    let scene: Owner<PxScene> = foundation
+    let mut scene: Owner<PxScene> = foundation
         .create(SceneDescriptor {
             gravity: PxVec3::new(0.0, -9.81, 0.0),
             on_advance: Some(OnAdvance),
@@ -136,7 +140,9 @@ fn setup_physx(
         })
         .unwrap();
 
-
+    unsafe {
+        physx_sys::PxScene_setVisualizationParameter_mut(scene.as_mut_ptr(), 0u32, 1.0);
+    }
 
     let handles = Handels::default();
 
