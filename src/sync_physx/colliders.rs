@@ -8,7 +8,7 @@ use crate::trans_to_physx;
 
 
 #[derive(Component)]
-pub enum Collider {
+pub enum PxCollider {
     Box{half_extents: Vec3},
     Sphere{radius: f32},
     Capsule{radius: f32, depth: f32},
@@ -18,7 +18,7 @@ pub enum Collider {
 
 pub fn new_collider(
     mut physx: ResMut<PhysXRes>,
-    query: Query<(&Collider, &PxRigidActorHandle), Added<Collider>>,
+    query: Query<(&PxCollider, &PxRigidActorHandle), Added<PxCollider>>,
 ){ 
 
 
@@ -31,7 +31,7 @@ pub fn new_collider(
 
             
             match collider {
-                Collider::Box{ half_extents } => {
+                PxCollider::Box{ half_extents } => {
 
                     let geom = PxBoxGeometry::new(half_extents.x, half_extents.y, half_extents.z);
 
@@ -40,7 +40,7 @@ pub fn new_collider(
                     physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
                 },
-                Collider::Sphere { radius } => {
+                PxCollider::Sphere { radius } => {
 
                     let geom = PxSphereGeometry::new(*radius);
 
@@ -49,7 +49,7 @@ pub fn new_collider(
                     physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
                 },
-                Collider::Capsule { radius, depth } => {
+                PxCollider::Capsule { radius, depth } => {
                         
                     let geom = PxCapsuleGeometry::new(*radius, *depth / 2.0);
 

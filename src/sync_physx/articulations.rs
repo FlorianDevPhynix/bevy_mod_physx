@@ -1,18 +1,18 @@
 use bevy::prelude::*;
 use physx::{prelude::{ArticulationJointType, ArticulationAxis, ArticulationMotion, ArticulationDriveType}, traits::Class};
-use physx_sys::{PxPhysics_createAggregate_mut, PxRigidActor, PxArticulationLink};
+use physx_sys::{PxPhysics_createAggregate_mut, PxRigidActor, PxArticulationLink as PxArticulationLink_sys};
  
 use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle, PxArticulationHandle};
 
 
 
 #[derive(Component)]
-pub struct Articulation {
+pub struct PxArticulation {
     links: Vec<(Entity, Option<Entity>)>, //link, parent
 }
 
 
-impl Articulation {
+impl PxArticulation {
 
     pub fn new() -> Self {
         Self{
@@ -22,7 +22,7 @@ impl Articulation {
 
     pub fn create_link(&mut self, commands: &mut Commands, parent: Option<Entity>, pose: Transform) -> Entity {
 
-        let link = commands.spawn(ArticulationLink{ pose }).id();
+        let link = commands.spawn(PxArticulationLink{ pose }).id();
 
         self.links.push((link, parent));
         
@@ -35,7 +35,7 @@ impl Articulation {
 
 
 #[derive(Component)]
-pub struct ArticulationLink{
+pub struct PxArticulationLink{
     pub pose: Transform,
 }
 
@@ -45,8 +45,8 @@ pub struct ArticulationLink{
 pub fn new_articulation(
     mut commands: Commands,
     mut physx: ResMut<PhysXRes>,
-    query: Query<(Entity, &Articulation), Added<Articulation>>,
-    link_q: Query<&ArticulationLink>,
+    query: Query<(Entity, &PxArticulation), Added<PxArticulation>>,
+    link_q: Query<&PxArticulationLink>,
 ) {
 
     for (e, articulation) in query.iter() {
@@ -121,7 +121,7 @@ pub fn new_articulation(
     
 
 //todo add more joint types
-pub enum JointAxis {
+pub enum PxJointAxis {
     X = 0,
     Y = 1,
     Z = 2,
@@ -129,7 +129,7 @@ pub enum JointAxis {
 
 
 #[derive(Default)]
-pub enum JointType {
+pub enum PxJointType {
     #[default]
     Fixed,
     Spherical,
@@ -137,22 +137,22 @@ pub enum JointType {
 
 
 #[derive(Default, Clone, Copy)]
-pub struct JointLimit {
+pub struct PxJointLimit {
     pub min: f32,
     pub max: f32,
 }
 
 
 #[derive(Default, Clone, Copy)]
-pub enum JointMotion {
+pub enum PxJointMotion {
     #[default]
     Locked,
     Free,
-    Limited(JointLimit),
+    Limited(PxJointLimit),
 }
 
 #[derive(Default, Clone, Copy)]
-pub struct JointDrive {
+pub struct PxJointDrive {
     pub stiffness: f32,
     pub damping: f32,
     pub force_limit: f32,
@@ -160,12 +160,12 @@ pub struct JointDrive {
 
 
 #[derive(Component, Default)]
-pub struct ArticulationJoint {
-    pub joint_type: JointType,
+pub struct PxArticulationJoint {
+    pub joint_type: PxJointType,
     pub parent_pose: Transform,
     pub child_pose: Transform,
-    pub motions: [JointMotion; 3],
-    pub drives: [Option<JointDrive>; 3],
+    pub motions: [PxJointMotion; 3],
+    pub drives: [Option<PxJointDrive>; 3],
 }
 
 
@@ -173,8 +173,8 @@ pub struct ArticulationJoint {
 
 
 // impl a building pattern for articulationJoint 
-impl ArticulationJoint {
-    pub fn new(joint_type: JointType) -> Self {
+impl PxArticulationJoint {
+    pub fn new(joint_type: PxJointType) -> Self {
         Self {
             joint_type,
             ..Default::default()
@@ -191,22 +191,22 @@ impl ArticulationJoint {
         self
     }
 
-    pub fn motion(mut self, axis: JointAxis, motion: JointMotion) -> Self {
+    pub fn motion(mut self, axis: PxJointAxis, motion: PxJointMotion) -> Self {
         self.motions[axis as usize] = motion;
         self
     }
 
-    pub fn motions(mut self, motion: JointMotion) -> Self {
+    pub fn motions(mut self, motion: PxJointMotion) -> Self {
         self.motions = [motion; 3];
         self
     }
 
-    pub fn drive(mut self, axis: JointAxis, drive: JointDrive) -> Self {
+    pub fn drive(mut self, axis: PxJointAxis, drive: PxJointDrive) -> Self {
         self.drives[axis as usize] = Some(drive);
         self
     }
 
-    pub fn drives(mut self, drive: JointDrive) -> Self {
+    pub fn drives(mut self, drive: PxJointDrive) -> Self {
         self.drives = [Some(drive); 3];
         self
     }
@@ -216,7 +216,7 @@ impl ArticulationJoint {
 
 pub fn new_articulation_joint(
     physx: ResMut<PhysXRes>,
-    query: Query<(&ArticulationJoint, &PxRigidActorHandle), Added<ArticulationJoint>>,
+    query: Query<(&PxArticulationJoint, &PxRigidActorHandle), Added<PxArticulationJoint>>,
 ) {
 
     unsafe {
@@ -225,7 +225,7 @@ pub fn new_articulation_joint(
 
             //get joint from link at set based on joint type
             let px_link = *physx.handles.rigid_actors.get(handle.0).unwrap();
-            let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link as *const PxArticulationLink);
+            let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link as *const PxArticulationLink_sys);
 
             //pose
             physx_sys::PxArticulationJointBase_setParentPose_mut(px_joint, trans_to_physx(joint.parent_pose).as_ptr());
@@ -236,16 +236,16 @@ pub fn new_articulation_joint(
 
             //type
             match joint.joint_type {
-                JointType::Fixed => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Fix);},
-                JointType::Spherical => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Spherical);},
+                PxJointType::Fixed => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Fix);},
+                PxJointType::Spherical => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Spherical);},
             }
 
             //motion
             for (i, motion) in joint.motions.iter().enumerate() {
                 match motion {
-                    JointMotion::Locked => {(*px_joint_reduced).set_motion(to_axis(i), ArticulationMotion::Locked);},
-                    JointMotion::Free => {(*px_joint_reduced).set_motion(to_axis(i), ArticulationMotion::Free);},
-                    JointMotion::Limited(limit) => {
+                    PxJointMotion::Locked => {(*px_joint_reduced).set_motion(to_axis(i), ArticulationMotion::Locked);},
+                    PxJointMotion::Free => {(*px_joint_reduced).set_motion(to_axis(i), ArticulationMotion::Free);},
+                    PxJointMotion::Limited(limit) => {
                         (*px_joint_reduced).set_motion(to_axis(i), ArticulationMotion::Limited);
                         (*px_joint_reduced).set_limit(to_axis(i), limit.min, limit.max);
                     },

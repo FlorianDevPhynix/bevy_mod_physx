@@ -3,18 +3,26 @@ use bevy::prelude::*;
 use physx::prelude::*;
 
 use crate::{PhysXRes, PxRigidActorHandle, PxRigidDynamic, DynamicActor};
-use crate::sync_physx::articulations::ArticulationLink;
+use crate::sync_physx::articulations::PxArticulationLink;
 
 
 
 //velocitys
-#[derive(Component, Default)]
-pub struct PxVelocity {
-    pub liniar: Vec3,
-    pub angular: Vec3,
+#[derive(Component, Default)] 
+pub struct PxVelocity {//read only for now
+    liniar: Vec3,
+    angular: Vec3,
 }
 
 impl PxVelocity {
+
+    pub fn get_linear_velocity(&self) -> Vec3 {
+        return self.liniar;
+    }
+
+    pub fn get_angular_velocity(&self) -> Vec3 {
+        return self.angular;
+    }
 
     pub fn get_velocity_at_pos(&self, pos: Vec3, transform: &Transform) -> Vec3 {
 
@@ -27,12 +35,14 @@ impl PxVelocity {
 
     }
 
+
+
 }
 
 
 pub fn px_write_velocitys(
     physx: Res<PhysXRes>,
-    mut query: Query<(&PxRigidActorHandle, &mut PxVelocity), Or<(With<DynamicActor>, With<ArticulationLink>)>>,
+    mut query: Query<(&PxRigidActorHandle, &mut PxVelocity), Or<(With<DynamicActor>, With<PxArticulationLink>)>>,
     // time: Res<Time>,
 ){
 
