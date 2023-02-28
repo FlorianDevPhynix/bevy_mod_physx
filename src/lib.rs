@@ -43,8 +43,9 @@ impl Plugin for PhysXPlugin {
             .add_systems((
                 new_articulation_joint,
                 new_collider,
-                //px_apply_forces, 
-                //px_set_joints
+                px_apply_forces, 
+                //px_set_joints,
+                // set_changed_transform,
             ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 
             //run physx
