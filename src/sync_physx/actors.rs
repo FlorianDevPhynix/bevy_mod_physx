@@ -7,13 +7,13 @@ use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle};
 
 //dynamic
 #[derive(Component)]
-pub struct DynamicActor;
+pub struct PxDynamicActor;
 
 
 pub fn new_dyn_actor(
     mut commands: Commands,
     mut physx: ResMut<PhysXRes>,
-    query: Query<(Entity, &Transform), Added<DynamicActor>>,
+    query: Query<(Entity, &Transform), Added<PxDynamicActor>>,
 ){ 
 
     for (e, trans) in query.iter() {
@@ -33,13 +33,13 @@ pub fn new_dyn_actor(
 
 //static
 #[derive(Component)]
-pub struct StaticActor;
+pub struct PxStaticActor;
 
 
 pub fn new_static_actor(
     mut commands: Commands,
     mut physx: ResMut<PhysXRes>,
-    query: Query<(Entity, &Transform), Added<StaticActor>>,
+    query: Query<(Entity, &Transform), Added<PxStaticActor>>,
 ){ 
 
     for (e, trans) in query.iter() {
