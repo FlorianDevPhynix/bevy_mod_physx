@@ -22,7 +22,10 @@ impl PxArticulation {
 
     pub fn create_link(&mut self, commands: &mut Commands, parent: Option<Entity>, pose: Transform) -> Entity {
 
-        let link = commands.spawn(PxArticulationLink{ pose }).id();
+        let link = commands.spawn((
+            TransformBundle::from_transform(pose),
+            PxArticulationLink{ pose }
+        )).id();
 
         self.links.push((link, parent));
         
@@ -39,7 +42,8 @@ pub struct PxArticulationLink{
     pub pose: Transform,
 }
 
-
+#[derive(Component)]
+pub struct PxArticulationRootTag;
 
 
 pub fn new_articulation(
@@ -66,7 +70,10 @@ pub fn new_articulation(
 
                 let parent = match link.1 {
                     Some(parent_e) => *map.get(&parent_e).unwrap(),
-                    None => std::ptr::null_mut(),
+                    None => {
+                        commands.entity(link.0).insert(PxArticulationRootTag); //mark root link
+                        std::ptr::null_mut()
+                    },
                 };
 
 
@@ -140,6 +147,12 @@ pub enum PxJointType {
 pub struct PxJointLimit {
     pub min: f32,
     pub max: f32,
+}
+
+impl PxJointLimit {
+    pub fn new (min: f32, max: f32) -> Self {
+        Self {min,max,}
+    }
 }
 
 
@@ -216,12 +229,12 @@ impl PxArticulationJoint {
 
 pub fn new_articulation_joint(
     physx: ResMut<PhysXRes>,
-    query: Query<(&PxArticulationJoint, &PxRigidActorHandle), Added<PxArticulationJoint>>,
+    query: Query<(&PxRigidActorHandle, &PxArticulationJoint), (Added<PxArticulationJoint>, Without<PxArticulationRootTag>)>,
 ) {
 
     unsafe {
 
-        for (joint, handle) in query.iter() {
+        for (handle, joint) in query.iter() {
 
             //get joint from link at set based on joint type
             let px_link = *physx.handles.rigid_actors.get(handle.0).unwrap();

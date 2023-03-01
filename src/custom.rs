@@ -27,7 +27,7 @@ pub type PxScene = physx::scene::PxScene<
 
 
 
-
+//custom collision filter
 pub unsafe extern "C" fn costum_filter_shader(
     mut shader_cb_info: *mut FilterShaderCallbackInfo
 ) -> u16 {

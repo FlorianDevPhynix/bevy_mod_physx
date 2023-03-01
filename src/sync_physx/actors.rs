@@ -59,12 +59,12 @@ pub fn new_static_actor(
 
 //static ground plane
 #[derive(Component)]
-pub struct GroundPlane{
+pub struct PxPlane{
     normal: Vec3,
     offset: f32,
 }
 
-impl GroundPlane{
+impl PxPlane{
     pub fn new(normal: Vec3, offset: f32) -> Self{
         Self{
             normal,
@@ -73,7 +73,7 @@ impl GroundPlane{
     }
 }
 
-impl Default for GroundPlane{
+impl Default for PxPlane{
     fn default() -> Self{
         Self{
             normal: Vec3::new(0.0, 1.0, 0.0),
@@ -86,7 +86,7 @@ impl Default for GroundPlane{
 pub fn new_ground_plane(
     mut commands: Commands,
     mut physx: ResMut<PhysXRes>,
-    query: Query<Entity, Added<GroundPlane>>,
+    query: Query<Entity, Added<PxPlane>>,
 ){ 
 
     for e in query.iter() {

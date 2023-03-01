@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::*, traits::Class};
 
 
-use crate::GroundPlane;
+use crate::PxPlane;
 use crate::PhysXRes;
 use crate::PxRigidActorHandle;
 use crate::trans_to_physx;
@@ -19,7 +19,7 @@ pub enum PxCollider {
 
 pub fn new_collider(
     mut physx: ResMut<PhysXRes>,
-    query: Query<(Entity, &PxCollider, Option<&PxRigidActorHandle>), (Added<PxCollider>, Without<GroundPlane>)>,
+    query: Query<(Entity, &PxCollider, Option<&PxRigidActorHandle>), (Added<PxCollider>, Without<PxPlane>)>,
     parent_q: Query<(&Parent, &Transform)>,
     actor_handle_q: Query<&PxRigidActorHandle>,
 ){ 
@@ -79,7 +79,7 @@ pub fn new_collider(
                     let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
                     //rotate capsule upright to fit with bevy's coordinate system
-                    let local_pose = Transform::from_rotation(Quat::from_rotation_z((90.0 as f32).to_radians()));
+                    let local_pose = Transform::from_rotation(Quat::from_rotation_z((90f32).to_radians()));
 
                     if let Some(collider_offset) = opt_collider_offset {
                         physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(collider_offset.mul_transform(local_pose)).as_ptr());
