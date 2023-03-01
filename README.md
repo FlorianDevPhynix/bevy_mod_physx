@@ -1,6 +1,6 @@
 # bevy_physx
 
-Plugin for NVIDIA PhysX in Bevy.
+Bevy plugin for NVIDIA PhysX.    
 Current PhysX version: 4.1.1 (5.0 soon)
 
 ### Disclaimer
@@ -48,7 +48,7 @@ pub fn setup(mut commands: Commands) {
 * [x] External forces
 * [x] Velocity
 
-### Not yet done 
+### Not yet implemented 
 * [ ] Scene query (raycast, overlap, sweep)
 * [ ] PxMaterial
 * [ ] Rigid body properties (mass, linear damping, angular damping, ...)
