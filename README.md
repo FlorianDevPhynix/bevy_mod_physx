@@ -1,8 +1,17 @@
 # bevy_physx
 
+Plugin for NVIDIA PhysX in Bevy.
+Current PhysX version: 4.1.1 (5.0 soon)
+
 ### Disclaimer
-This plugin is still in development, but most core features are implemented.  
+This plugin is still in development, some core features are not yet implemented.  
 Open for pull requests and issues.
+
+## Usage
+```toml
+[dependencies]
+bevy_physx = "0.1"
+```
 
 ## Example
 ```rust
@@ -49,6 +58,12 @@ pub fn setup(mut commands: Commands) {
 * [ ] Collision shapes (convex, triangle mesh, heightfield)
 * [ ] Debug renderer
 
+
+Compatibility of `bevy_physx` versions:
+
+| `bevy_physx`  | `bevy` |
+| :--           | :--    |
+| `0.1`         | `0.10` |
 
 ## License
 Todo
