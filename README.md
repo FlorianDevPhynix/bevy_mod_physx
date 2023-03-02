@@ -49,17 +49,17 @@ pub fn setup(mut commands: Commands) {
 * [x] External forces
 * [x] Velocity
 
-### Not yet implemented 
+## Not yet implemented 
 * [ ] Scene query (raycast, overlap, sweep)
-
 * [ ] Rigid body properties (mass, linear damping, angular damping, ...)
 * [ ] Removal detection (remove physx components when entity or component is removed)
 * [ ] Change detection (update physx components when component is changed)
 * [ ] Simple joints (fixed, revolute, prismatic, distance, spherical, ...)
 * [ ] Collision shapes (convex, triangle mesh, heightfield)
+* [ ] Collision filtering (collision groups, collision masks)
 * [ ] Debug renderer
 
-
+## Compatibility
 Compatibility of `bevy_physx` versions:
 
 | `bevy_physx`  | `bevy` |
