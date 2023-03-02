@@ -44,13 +44,14 @@ pub fn setup(mut commands: Commands) {
 * [x] Dynamic rigid bodies
 * [x] Static rigid bodies + PxPlanes
 * [x] Collision shapes (box, sphere, capsule)
+* [x] PxMaterial (friction, restitution)
 * [x] Articulation (multi body joint simulation)
 * [x] External forces
 * [x] Velocity
 
 ### Not yet implemented 
 * [ ] Scene query (raycast, overlap, sweep)
-* [ ] PxMaterial
+
 * [ ] Rigid body properties (mass, linear damping, angular damping, ...)
 * [ ] Removal detection (remove physx components when entity or component is removed)
 * [ ] Change detection (update physx components when component is changed)

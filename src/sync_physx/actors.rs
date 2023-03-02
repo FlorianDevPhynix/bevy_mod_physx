@@ -1,8 +1,9 @@
 use bevy::prelude::*;
 use physx::{prelude::*, scene::Scene, traits::Class};
 
+use crate::helpers::physx_vec3;
 use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle};
-
+use crate::sync_physx::materials::PxMaterial;
 
 
 //dynamic
@@ -86,16 +87,21 @@ impl Default for PxPlane{
 pub fn new_ground_plane(
     mut commands: Commands,
     mut physx: ResMut<PhysXRes>,
-    query: Query<Entity, Added<PxPlane>>,
+    query: Query<(Entity, &PxPlane, Option<&PxMaterial>), Added<PxPlane>>,
 ){ 
+ 
+    for (e, plane, opt_material) in query.iter() {
 
-    for e in query.iter() {
+        let material = match opt_material{
+            Some(mat) => mat.clone(),
+            None => PxMaterial::default(),
+        };
 
+        let mut px_material = physx.foundation.physics_mut().create_material(material.static_friction, material.dynamic_friction, material.restitution, ()).unwrap();
 
-        let mut material = physx.foundation.physics_mut().create_material(0.4, 0.4, 0.4, ()).unwrap();
 
         let mut ground_plane = physx.foundation.physics_mut()
-            .create_plane(PxVec3::new(0.0, 1.0, 0.0), 0.0, material.as_mut(), ())
+            .create_plane(physx_vec3(plane.normal), plane.offset, px_material.as_mut(), ())
             .unwrap();
             
 

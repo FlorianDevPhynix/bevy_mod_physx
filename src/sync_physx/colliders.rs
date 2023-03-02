@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::*, traits::Class};
 
 
+use crate::sync_physx::materials::PxMaterial;
 use crate::PxPlane;
 use crate::PhysXRes;
 use crate::PxRigidActorHandle;
@@ -19,7 +20,7 @@ pub enum PxCollider {
 
 pub fn new_collider(
     mut physx: ResMut<PhysXRes>,
-    query: Query<(Entity, &PxCollider, Option<&PxRigidActorHandle>), (Added<PxCollider>, Without<PxPlane>)>,
+    query: Query<(Entity, &PxCollider, Option<&PxMaterial>, Option<&PxRigidActorHandle>), (Added<PxCollider>, Without<PxPlane>)>,
     parent_q: Query<(&Parent, &Transform)>,
     actor_handle_q: Query<&PxRigidActorHandle>,
 ){ 
@@ -27,11 +28,20 @@ pub fn new_collider(
 
     unsafe {
 
-        let px_material = physx_sys::PxPhysics_createMaterial_mut(physx.foundation.physics_mut().as_mut_ptr(),0.6, 0.6, 0.4);
+        // let px_material = physx_sys::PxPhysics_createMaterial_mut(physx.foundation.physics_mut().as_mut_ptr(),0.6, 0.6, 0.4);
+    
 
+        for (e, collider, opt_material, opt_handle) in query.iter() {
 
-        for (e, collider, opt_handle) in query.iter() {
+            //material
+            let material = match opt_material{
+                Some(mat) => mat.clone(),
+                None => PxMaterial::default(),
+            };
+    
+            let px_material = physx.foundation.physics_mut().create_material(material.static_friction, material.dynamic_friction, material.restitution, ()).unwrap().as_mut_ptr();
 
+            //offset
             let mut opt_collider_offset = None;
 
             let handle = match opt_handle {

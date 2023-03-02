@@ -6,6 +6,9 @@ pub use actors::*;
 pub mod colliders;
 pub use colliders::*;
 
+pub mod materials;
+pub use materials::*; 
+
 pub mod ext_forces;
 pub use ext_forces::*;
 
@@ -14,3 +17,4 @@ pub use articulations::*;
 
 pub mod change; 
 pub use change::*; 
+
