@@ -29,9 +29,9 @@ pub fn new_collider(
 
 
         for (e, collider, opt_material, opt_handle) in query.iter() {
-
+ 
             //flag
-            let flags = physx_sys::PxShapeFlags::SimulationShape; //todo
+            let flags = physx_sys::PxShapeFlags::SimulationShape | physx_sys::PxShapeFlags::SceneQueryShape; //todo
 
             //material
             let material = match opt_material{

@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use bevy::prelude::*;
  
 use physx::prelude::*;
-use physx::traits::Class;
 use physx::scene::Scene;
+use physx::traits::Class;
 use physx::{physics::PhysicsFoundationBuilder, foundation::DefaultAllocator};
 
 mod helpers;
@@ -48,11 +48,12 @@ impl Plugin for PhysXPlugin {
             .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush)) //clear commands for new components
 
             .add_systems((
+                // set_changed_transform,
                 new_articulation_joint,
                 new_collider,
                 px_apply_forces, 
                 //px_set_joints,
-                // set_changed_transform,
+                add_articulation_system,
             ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 
             //run physx
@@ -91,6 +92,7 @@ unsafe impl Send for PhysXRes {}
 unsafe impl Sync for PhysXRes {}
 
 
+#[derive(Debug, Clone)]
 pub struct RaycastHit {
     pub entity: Entity,
     pub distance: f32,
@@ -109,51 +111,51 @@ impl PhysXRes {
 
     }
     
-    // / Raycast from origin in direction, returns entity, distance, position, normal
-    // / returns None if no hit
-    // / returns Some((entity, distance, position, normal)) if hit
-    // pub fn raycast(&mut self, origin: Vec3, direction: Vec3, max_distance: f32) -> Option<RaycastHit> {
+    /// Raycast from origin in direction, returns entity, distance, position, normal
+    /// returns None if no hit
+    /// returns Some((entity, distance, position, normal)) if hit
+    pub fn raycast(&mut self, origin: Vec3, direction: Vec3, max_distance: f32) -> Option<RaycastHit> {
 
-    //     unsafe {
+        unsafe {
 
-    //         let raycast_buffer = physx_sys::create_raycast_buffer();
-    //         let filter_data = physx_sys::PxQueryFilterData_new();
+            let filter_data = physx_sys::PxQueryFilterData_new();
+            let mut hit = std::mem::MaybeUninit::uninit();
  
-    //         if physx_sys::PxScene_raycast(
-    //             self.scene.as_mut_ptr(),
-    //             physx_vec3(origin).as_ptr(),
-    //             physx_vec3(direction).as_ptr(),
-    //             max_distance,
-    //             raycast_buffer,
-    //             physx_sys::PxHitFlags {
-    //                 mBits: physx_sys::PxHitFlag::eDEFAULT as u16,
-    //             },
-    //             &filter_data,
-    //             std::ptr::null_mut(),
-    //             std::ptr::null_mut(),
-    //         ) && (*raycast_buffer).hasBlock {
+            if physx_sys::PxSceneQueryExt_raycastSingle(
+                self.scene.as_mut_ptr(),
+                physx_vec3(origin).as_ptr(),
+                physx_vec3(direction).as_ptr(),
+                max_distance,
+                physx_sys::PxHitFlags::Default,
+                hit.as_mut_ptr(),
+                &filter_data,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+            ) {
 
-    //             let hit_actor = (*raycast_buffer).block.actor;
-    //             let distance = (*raycast_buffer).block.distance;
-    //             let position = (*raycast_buffer).block.position;
-    //             let normal = (*raycast_buffer).block.normal;
+                let hit = hit.assume_init();
 
-    //             match self.actor_to_entity.get(&hit_actor) {
-    //                 Some(entity) => {
-    //                     return Some(RaycastHit { entity: *entity, distance, position: vec3_from_pxvec3(position), normal: vec3_from_pxvec3(normal), });
-    //                 }
-    //                 None => {
-    //                     panic!("Error: Raycast hit actor without entity");
-    //                 }
-    //             }
+                match self.actor_to_entity.get(&hit.actor) {
+                    Some(entity) => {
+                        return Some(RaycastHit { 
+                            entity: *entity, 
+                            distance: hit.distance, 
+                            position: vec3_from_pxvec3(hit.position), 
+                            normal: vec3_from_pxvec3(hit.normal), 
+                        });
+                    }
+                    None => {
+                        panic!("Error: Raycast hit actor without entity");
+                    }
+                }
 
-    //         } else {
-    //             return None;
-    //         }
+            } else {
+                return None;
+            }
  
-    //     }
+        }
 
-    // }
+    }
 
 }
 
@@ -201,7 +203,7 @@ fn setup_physx(
     };
 
 
-    let mut scene: Owner<PxScene> = foundation
+    let scene: Owner<PxScene> = foundation
         .create(SceneDescriptor {
             gravity: PxVec3::new(0.0, -9.81, 0.0),
             on_advance: Some(OnAdvance),
