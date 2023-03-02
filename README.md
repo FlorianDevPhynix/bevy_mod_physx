@@ -1,7 +1,6 @@
 # bevy_physx
-
 Bevy plugin for NVIDIA PhysX.    
-Current PhysX version: 4.1.1 (5.0 soon)
+Current PhysX version: 5.1.3
 
 ### Disclaimer
 This plugin is still in development, some core features are not yet implemented.  
@@ -59,6 +58,7 @@ pub fn setup(mut commands: Commands) {
 * [ ] Collision filtering (collision groups, collision masks)
 * [ ] Scene query (overlap, sweep)
 * [ ] Debug renderer
+* [ ] And more...
 
 ## Compatibility
 Compatibility of `bevy_physx` versions:
