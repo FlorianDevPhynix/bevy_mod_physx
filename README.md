@@ -51,10 +51,10 @@ pub fn setup(mut commands: Commands) {
 * [x] Velocity
 
 ## Not yet implemented 
-* [ ] Rigid body properties (mass, linear damping, angular damping, ...)
-* [ ] Removal detection (remove physx components when entity or component is removed)
-* [ ] Change detection (update physx components when component is changed)
+* [ ] Rigid body properties (mass, dencity, linear damping, angular damping, com, ...)
 * [ ] Simple joints (fixed, revolute, prismatic, distance, spherical, ...)
+* [ ] Removal detection (remove actor when entity or component is removed)
+* [ ] Change detection (update physx when component is changed)
 * [ ] Collision shapes (convex, triangle mesh, heightfield)
 * [ ] Collision filtering (collision groups, collision masks)
 * [ ] Scene query (overlap, sweep)
