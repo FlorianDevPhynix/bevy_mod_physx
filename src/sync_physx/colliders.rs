@@ -30,6 +30,9 @@ pub fn new_collider(
 
         for (e, collider, opt_material, opt_handle) in query.iter() {
 
+            //flag
+            let flags = physx_sys::PxShapeFlags{ mBits: 3u8 };
+
             //material
             let material = match opt_material{
                 Some(mat) => mat.clone(),
@@ -59,7 +62,7 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), physx_sys::PxShapeFlags{ mBits: 1u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 
                     if let Some(collider_offset) = opt_collider_offset {
                         physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(*collider_offset).as_ptr());
@@ -71,7 +74,7 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), physx_sys::PxShapeFlags{ mBits: 1u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 
                     if let Some(collider_offset) = opt_collider_offset {
                         physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(*collider_offset).as_ptr());
@@ -83,7 +86,7 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), physx_sys::PxShapeFlags{ mBits: 1u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 
                     //rotate capsule upright to fit with bevy's coordinate system
                     let local_pose = Transform::from_rotation(Quat::from_rotation_z((90f32).to_radians()));

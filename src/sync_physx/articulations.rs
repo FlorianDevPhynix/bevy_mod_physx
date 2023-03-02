@@ -83,9 +83,10 @@ pub fn new_articulation(
                 let px_link = physx_sys::PxArticulationBase_createLink_mut(px_articulation, parent, pose.as_ptr());
 
                 //handle
-                let handle = physx.handles.rigid_actors.insert(px_link as *mut PxRigidActor);
-                commands.entity(link.0).insert(PxRigidActorHandle(handle));
-
+                // let handle = physx.handles.rigid_actors.insert(px_link as *mut PxRigidActor);
+                // commands.entity(link.0).insert(PxRigidActorHandle(handle));
+                let handle = physx.insert_rigid_actor(link.0, px_link as *mut PxRigidActor);
+                commands.entity(link.0).insert(handle);
 
                 map.insert(link.0, px_link);
 

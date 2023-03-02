@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use bevy::prelude::*;
 
 use physx::prelude::*;
@@ -81,10 +83,71 @@ enum PhysXPipelineSet {
 pub struct PhysXRes {
     foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
     scene: Owner<PxScene>,
+    actor_to_entity: HashMap<*mut physx_sys::PxRigidActor, Entity>,
     handles: Handels,
 }
 unsafe impl Send for PhysXRes {}
 unsafe impl Sync for PhysXRes {}
+
+
+impl PhysXRes {
+
+    fn insert_rigid_actor(&mut self, entity: Entity, actor: *mut physx_sys::PxRigidActor) -> PxRigidActorHandle {
+
+        let handle = self.handles.rigid_actors.insert(actor);
+        self.actor_to_entity.insert(actor, entity);
+
+        return PxRigidActorHandle(handle);
+
+    }
+    
+    /// Raycast from origin in direction, returns entity, distance, position, normal
+    /// returns None if no hit
+    /// returns Some((entity, distance, position, normal)) if hit
+    pub fn raycast(&mut self, origin: Vec3, direction: Vec3, max_distance: f32) -> Option<(Entity, f32, Vec3, Vec3)> {
+
+        unsafe {
+
+            let raycast_buffer = physx_sys::create_raycast_buffer();
+            let filter_data = physx_sys::PxQueryFilterData_new();
+ 
+            if physx_sys::PxScene_raycast(
+                self.scene.as_mut_ptr(),
+                physx_vec3(origin).as_ptr(),
+                physx_vec3(direction).as_ptr(),
+                max_distance,
+                raycast_buffer,
+                physx_sys::PxHitFlags {
+                    mBits: physx_sys::PxHitFlag::eDEFAULT as u16,
+                },
+                &filter_data,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+            ) && (*raycast_buffer).hasBlock {
+
+                let hit_actor = (*raycast_buffer).block.actor;
+                let distance = (*raycast_buffer).block.distance;
+                let position = (*raycast_buffer).block.position;
+                let normal = (*raycast_buffer).block.normal;
+
+                match self.actor_to_entity.get(&hit_actor) {
+                    Some(entity) => {
+                        return Some((*entity, distance, vec3_from_pxvec3(position), vec3_from_pxvec3(normal)));
+                    }
+                    None => {
+                        panic!("Error: Raycast hit actor without entity");
+                    }
+                }
+
+            } else {
+                return None;
+            }
+ 
+        }
+
+    }
+
+}
 
 
 
@@ -146,7 +209,7 @@ fn setup_physx(
 
     let handles = Handels::default();
 
-    commands.insert_resource(PhysXRes{ foundation, scene, handles });
+    commands.insert_resource(PhysXRes{ foundation, scene, handles, actor_to_entity: HashMap::new() });
 }
 
 

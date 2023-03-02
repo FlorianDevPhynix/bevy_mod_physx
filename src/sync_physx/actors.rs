@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::*, scene::Scene, traits::Class};
 
 use crate::helpers::physx_vec3;
-use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle};
+use crate::{PhysXRes, trans_to_physx};
 use crate::sync_physx::materials::PxMaterial;
 
 
@@ -21,8 +21,8 @@ pub fn new_dyn_actor(
 
         let mut dyn_actor = physx.foundation.physics_mut().create_dynamic(&trans_to_physx(*trans), ()).unwrap();
 
-        let handle = physx.handles.rigid_actors.insert(dyn_actor.as_mut().as_mut_ptr());
-        commands.entity(e).insert(PxRigidActorHandle(handle));
+        let handle = physx.insert_rigid_actor(e, dyn_actor.as_mut().as_mut_ptr());
+        commands.entity(e).insert(handle);
 
         physx.scene.add_dynamic_actor(dyn_actor);
 
@@ -47,8 +47,8 @@ pub fn new_static_actor(
 
         let mut static_actor = physx.foundation.physics_mut().create_static(trans_to_physx(*trans), ()).unwrap();
 
-        let handle = physx.handles.rigid_actors.insert(static_actor.as_mut().as_mut_ptr());
-        commands.entity(e).insert(PxRigidActorHandle(handle));
+        let handle = physx.insert_rigid_actor(e, static_actor.as_mut().as_mut_ptr());
+        commands.entity(e).insert(handle);
 
         physx.scene.add_static_actor(static_actor);
 
@@ -105,8 +105,8 @@ pub fn new_ground_plane(
             .unwrap();
             
 
-        let handle = physx.handles.rigid_actors.insert(ground_plane.as_mut().as_mut_ptr());
-        commands.entity(e).insert(PxRigidActorHandle(handle));
+        let handle = physx.insert_rigid_actor(e, ground_plane.as_mut().as_mut_ptr());
+        commands.entity(e).insert(handle);
 
         physx.scene.add_static_actor(ground_plane);
 
