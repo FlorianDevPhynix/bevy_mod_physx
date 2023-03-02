@@ -1252,26 +1252,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enumflags2"
-version = "0.7.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e75d4cd21b95383444831539909fbb14b9dc3fdceb2a6f5d36577329a1f55ccb"
-dependencies = [
- "enumflags2_derive",
-]
-
-[[package]]
-name = "enumflags2_derive"
-version = "0.7.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f58dc3c5e468259f19f2d46304a6b28f1c3d034442e14b322d2b850e36f6d5ae"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "erased-serde"
 version = "0.3.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2297,10 +2277,9 @@ dependencies = [
 [[package]]
 name = "physx"
 version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d200e8ed8a026c14badde8e9ec2a4244a258e1fd177b0fbc244bf6630f1cde25"
+source = "git+https://github.com/EmbarkStudios/physx-rs?branch=update/physx5#54764dd1eb14ff723607ba78ea5b0e82a7e59de1"
 dependencies = [
- "enumflags2",
+ "bitflags",
  "log",
  "physx-sys",
  "thiserror",
@@ -2309,9 +2288,9 @@ dependencies = [
 [[package]]
 name = "physx-sys"
 version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35bb4bf1bfa71baa5c2574ee6323734dac9f1a046310535532f30b30f6585419"
+source = "git+https://github.com/EmbarkStudios/physx-rs?branch=update/physx5#54764dd1eb14ff723607ba78ea5b0e82a7e59de1"
 dependencies = [
+ "bitflags",
  "cc",
 ]
 

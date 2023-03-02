@@ -57,7 +57,7 @@ pub fn new_articulation(
 
         unsafe {
 
-            let px_articulation = physx_sys::PxPhysics_createArticulationReducedCoordinate_mut(physx.foundation.physics_mut().as_mut_ptr()) as *mut physx_sys::PxArticulationBase;
+            let px_articulation = physx_sys::PxPhysics_createArticulationReducedCoordinate_mut(physx.foundation.physics_mut().as_mut_ptr());// as *mut physx_sys::PxArticulationBase;
  
             let handle = physx.handles.articulations.insert(px_articulation);
             commands.entity(e).insert(PxArticulationHandle(handle));
@@ -80,7 +80,8 @@ pub fn new_articulation(
                 let pose = trans_to_physx(link_comp.pose);
 
                 //link
-                let px_link = physx_sys::PxArticulationBase_createLink_mut(px_articulation, parent, pose.as_ptr());
+                let px_link = physx_sys::PxArticulationReducedCoordinate_createLink_mut(px_articulation, parent, pose.as_ptr());
+                //PxArticulationBase_createLink_mut(px_articulation, parent, pose.as_ptr());
 
                 //handle
                 // let handle = physx.handles.rigid_actors.insert(px_link as *mut PxRigidActor);
@@ -108,7 +109,8 @@ pub fn new_articulation(
             }
                 
             //px spawn
-            let px_aggregate = PxPhysics_createAggregate_mut(physx.foundation.physics_mut().as_mut_ptr() as *mut physx_sys::PxPhysics, 50, false);
+            let filter_hint = physx_sys::phys_PxGetAggregateFilterHint(physx_sys::PxAggregateType::Generic, false);
+            let px_aggregate = PxPhysics_createAggregate_mut(physx.foundation.physics_mut().as_mut_ptr() as *mut physx_sys::PxPhysics, 32, 32, filter_hint);
             physx_sys::PxAggregate_addArticulation_mut(px_aggregate, px_articulation);
             
             physx_sys::PxScene_addAggregate_mut(physx.scene.as_mut_ptr(), px_aggregate);
@@ -242,8 +244,8 @@ pub fn new_articulation_joint(
             let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link as *const PxArticulationLink_sys);
 
             //pose
-            physx_sys::PxArticulationJointBase_setParentPose_mut(px_joint, trans_to_physx(joint.parent_pose).as_ptr());
-            physx_sys::PxArticulationJointBase_setChildPose_mut(px_joint, trans_to_physx(joint.child_pose).as_ptr());
+            physx_sys::PxArticulationJointReducedCoordinate_setParentPose_mut(px_joint, trans_to_physx(joint.parent_pose).as_ptr());
+            physx_sys::PxArticulationJointReducedCoordinate_setChildPose_mut(px_joint, trans_to_physx(joint.child_pose).as_ptr());
 
             //save
             let px_joint_reduced = px_joint as *mut physx::prelude::ArticulationJointReducedCoordinate;
