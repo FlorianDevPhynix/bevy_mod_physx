@@ -39,7 +39,7 @@ pub fn new_collider(
                 None => PxMaterial::default(),
             };
     
-            let px_material = physx.foundation.physics_mut().create_material(material.static_friction, material.dynamic_friction, material.restitution, ()).unwrap().as_mut_ptr();
+            let px_material = physx.foundation.physics_mut().create_material(material.static_friction, material.dynamic_friction, material.restitution, ()).unwrap();
 
             //offset
             let mut opt_collider_offset = None;
@@ -62,7 +62,7 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
                     if let Some(collider_offset) = opt_collider_offset {
                         physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(*collider_offset).as_ptr());
@@ -74,7 +74,7 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
                     if let Some(collider_offset) = opt_collider_offset {
                         physx_sys::PxShape_setLocalPose_mut(shape, trans_to_physx(*collider_offset).as_ptr());
@@ -86,7 +86,7 @@ pub fn new_collider(
 
                     let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
-                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material, physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
+                    let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), physx_sys::PxShapeFlags{ mBits: 1u64 as u8 });
 
                     //rotate capsule upright to fit with bevy's coordinate system
                     let local_pose = Transform::from_rotation(Quat::from_rotation_z((90f32).to_radians()));
