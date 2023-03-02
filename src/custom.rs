@@ -1,5 +1,5 @@
 use physx::prelude::*;
-use physx_sys::{PxFilterFlag, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxPairFlag};
+use physx_sys::{PxFilterFlag, PxPairFlags, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxPairFlag};
 
 
 //imports
@@ -27,31 +27,31 @@ pub(crate) type PxScene = physx::scene::PxScene<
 
 
 //custom collision filter
-// pub unsafe extern "C" fn costum_filter_shader(
-//     mut shader_cb_info: *mut FilterShaderCallbackInfo
-// ) -> u16 {
+pub unsafe extern "C" fn costum_filter_shader(
+    mut shader_cb_info: *mut FilterShaderCallbackInfo
+) -> u16 {
+ 
+    // let triggers through
+    if phys_PxFilterObjectIsTrigger((*shader_cb_info).attributes0) || phys_PxFilterObjectIsTrigger((*shader_cb_info).attributes1) {
+        (*(*shader_cb_info).pairFlags) = PxPairFlags::TriggerDefault;// PxPairFlag::TriggerDefault;
+        return PxFilterFlag::Default as u16;	
+    }
 
-//     // let triggers through
-//     if phys_PxFilterObjectIsTrigger((*shader_cb_info).attributes0) || phys_PxFilterObjectIsTrigger((*shader_cb_info).attributes1) {
-//         (*(*shader_cb_info).pairFlags).mBits = PxPairFlag::eTRIGGER_DEFAULT as u16;
-//         return PxFilterFlag::eDEFAULT as u16;
-//     }
-
-//     // generate contacts for all that were not filtered above
-//     (*(*shader_cb_info).pairFlags).mBits = PxPairFlag::eCONTACT_DEFAULT as u16;
+    // generate contacts for all that were not filtered above
+    (*(*shader_cb_info).pairFlags) = PxPairFlags::ContactDefault;
 
     
 
-//     // trigger the contact callback for pairs (A,B) where
-//     // the filtermask of A contains the ID of B and vice versa.
-//     if  ((*shader_cb_info).filterData0.word1) != 0 && ((*shader_cb_info).filterData0.word1 == (*shader_cb_info).filterData1.word0) ||
-//         ((*shader_cb_info).filterData1.word1) != 0 && ((*shader_cb_info).filterData1.word1 == (*shader_cb_info).filterData0.word0) 
-//     {
-//         return PxFilterFlag::eKILL as u16;
-//     }
+    // trigger the contact callback for pairs (A,B) where
+    // the filtermask of A contains the ID of B and vice versa.
+    if  ((*shader_cb_info).filterData0.word1) != 0 && ((*shader_cb_info).filterData0.word1 == (*shader_cb_info).filterData1.word0) ||
+        ((*shader_cb_info).filterData1.word1) != 0 && ((*shader_cb_info).filterData1.word1 == (*shader_cb_info).filterData0.word0) 
+    {
+        return PxFilterFlag::Kill as u16;
+    }
 
-//     return PxFilterFlag::eDEFAULT as u16;
-// }
+    return PxFilterFlag::Default as u16;
+}
 
 
 pub struct OnCollision;

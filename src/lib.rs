@@ -207,7 +207,7 @@ fn setup_physx(
         .create(SceneDescriptor {
             gravity: PxVec3::new(0.0, -9.81, 0.0),
             on_advance: Some(OnAdvance),
-            // simulation_filter_shader: FilterShaderDescriptor::Custom(costum_filter_shader),
+            simulation_filter_shader: FilterShaderDescriptor::Custom(costum_filter_shader),
             thread_count: std::thread::available_parallelism().unwrap().get() as u32,
             ..SceneDescriptor::new(()) 
         })
