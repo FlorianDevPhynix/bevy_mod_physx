@@ -31,7 +31,7 @@ pub fn new_collider(
         for (e, collider, opt_material, opt_handle) in query.iter() {
 
             //flag
-            let flags = physx_sys::PxShapeFlags{ mBits: 3u8 };
+            let flags = physx_sys::PxShapeFlags{ mBits: 3u8 }; //todo
 
             //material
             let material = match opt_material{
@@ -41,9 +41,10 @@ pub fn new_collider(
     
             let px_material = physx.foundation.physics_mut().create_material(material.static_friction, material.dynamic_friction, material.restitution, ()).unwrap();
 
-            //offset
+            //offset 
             let mut opt_collider_offset = None;
 
+            //actor
             let handle = match opt_handle {
                 Some(some) => some, 
                 None => { //child collider, todo: remove unwrap
@@ -54,13 +55,13 @@ pub fn new_collider(
                 },
             };
 
+            let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
             
+
             match collider {
                 PxCollider::Box{ half_extents } => {
 
                     let geom = PxBoxGeometry::new(half_extents.x, half_extents.y, half_extents.z);
-
-                    let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
                     let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 
@@ -72,8 +73,6 @@ pub fn new_collider(
 
                     let geom = PxSphereGeometry::new(*radius);
 
-                    let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
-
                     let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 
                     if let Some(collider_offset) = opt_collider_offset {
@@ -83,8 +82,6 @@ pub fn new_collider(
                 PxCollider::Capsule { radius, depth } => {
                         
                     let geom = PxCapsuleGeometry::new(*radius, *depth / 2.0);
-
-                    let actor = *physx.handles.rigid_actors.get(handle.0).unwrap();
 
                     let shape = physx_sys::PxRigidActorExt_createExclusiveShape_mut_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 

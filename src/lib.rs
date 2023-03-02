@@ -90,6 +90,13 @@ unsafe impl Send for PhysXRes {}
 unsafe impl Sync for PhysXRes {}
 
 
+pub struct RaycastHit {
+    pub entity: Entity,
+    pub distance: f32,
+    pub position: Vec3,
+    pub normal: Vec3,
+}
+
 impl PhysXRes {
 
     fn insert_rigid_actor(&mut self, entity: Entity, actor: *mut physx_sys::PxRigidActor) -> PxRigidActorHandle {
@@ -104,7 +111,7 @@ impl PhysXRes {
     /// Raycast from origin in direction, returns entity, distance, position, normal
     /// returns None if no hit
     /// returns Some((entity, distance, position, normal)) if hit
-    pub fn raycast(&mut self, origin: Vec3, direction: Vec3, max_distance: f32) -> Option<(Entity, f32, Vec3, Vec3)> {
+    pub fn raycast(&mut self, origin: Vec3, direction: Vec3, max_distance: f32) -> Option<RaycastHit> {
 
         unsafe {
 
@@ -132,7 +139,7 @@ impl PhysXRes {
 
                 match self.actor_to_entity.get(&hit_actor) {
                     Some(entity) => {
-                        return Some((*entity, distance, vec3_from_pxvec3(position), vec3_from_pxvec3(normal)));
+                        return Some(RaycastHit { entity: *entity, distance, position: vec3_from_pxvec3(position), normal: vec3_from_pxvec3(normal), });
                     }
                     None => {
                         panic!("Error: Raycast hit actor without entity");
