@@ -1,10 +1,11 @@
 
 use bevy::prelude::*;
 
-use physx::prelude::*;
 
-use crate::{helpers::physx_vec3, PhysX, PxRigidDynamic, PxDynamicActor, PxRigidActorHandle};
-use crate::sync_physx::articulations::PxArticulationLink;
+use physx::traits::Class;
+
+use crate::{PxStaticActor};
+use crate::{helpers::physx_vec3, PhysX, PxRigidActorHandle};
 
 
 
@@ -60,21 +61,21 @@ impl PxExternalForce {
 //todo: maybe add change filter
 pub fn px_apply_forces(
     physx: Res<PhysX>,
-    mut query: Query<(&PxRigidActorHandle, &mut PxExternalForce), Or<(With<PxDynamicActor>, With<PxArticulationLink>)>>,
-
-    // time: Res<Time>,
+    mut query: Query<(&PxRigidActorHandle, &mut PxExternalForce), (Changed<PxExternalForce>, Without<PxStaticActor>)>,
 ){
 
-    //dyn Actors
-    for (handle, mut force) in query.iter_mut() {
+    unsafe {
 
-        let actor = physx.handles.rigid_actors.get(handle.0)
-            .and_then(|actor| unsafe { (*actor as *mut PxRigidDynamic).as_mut() }).unwrap();
+        for (handle, mut force) in query.iter_mut() {
 
-        actor.add_force(&physx_vec3(force.force), ForceMode::Force, true);
-        actor.add_torque(&physx_vec3(force.torque), ForceMode::Force, true);
+            let actor = *physx.handles.rigid_actors.get(handle.0).unwrap() as *mut physx_sys::PxRigidBody;
 
-        force.clear();
+            physx_sys::PxRigidBody_addForce_mut(actor, physx_vec3(force.force).as_ptr(), physx_sys::PxForceMode::Force, true);
+            physx_sys::PxRigidBody_addTorque_mut(actor, physx_vec3(force.torque).as_ptr(), physx_sys::PxForceMode::Force, true);
+
+            force.bypass_change_detection().clear();
+        }
+
     }
 
 
