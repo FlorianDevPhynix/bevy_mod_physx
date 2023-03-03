@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::{ArticulationJointType, ArticulationAxis, ArticulationMotion, ArticulationDriveType}, traits::Class};
 use physx_sys::{PxPhysics_createAggregate_mut, PxRigidActor, PxArticulationLink as PxArticulationLink_sys};
  
-use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle, PxArticulationHandle};
+use crate::{PhysX, trans_to_physx, PxRigidActorHandle, PxArticulationHandle};
 
 
 
@@ -48,7 +48,7 @@ pub struct PxArticulationRootTag;
 
 pub fn new_articulation(
     mut commands: Commands,
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<(Entity, &PxArticulation), Added<PxArticulation>>,
     link_q: Query<&PxArticulationLink>,
 ) {
@@ -57,8 +57,11 @@ pub fn new_articulation(
 
         unsafe {
 
-            let px_articulation = physx_sys::PxPhysics_createArticulationReducedCoordinate_mut(physx.foundation.physics_mut().as_mut_ptr()) as *mut physx_sys::PxArticulationBase;
+            let px_articulation = physx_sys::PxPhysics_createArticulationReducedCoordinate_mut(physx.foundation.physics_mut().as_mut_ptr());// as *mut physx_sys::PxArticulationBase;
  
+            // physx_sys::PxArticulationReducedCoordinate_setArticulationFlag_mut(px_articulation, physx_sys::PxArticulationFlag::FixBase, true);
+
+
             let handle = physx.handles.articulations.insert(px_articulation);
             commands.entity(e).insert(PxArticulationHandle(handle));
 
@@ -80,11 +83,9 @@ pub fn new_articulation(
                 let pose = trans_to_physx(link_comp.pose);
 
                 //link
-                let px_link = physx_sys::PxArticulationBase_createLink_mut(px_articulation, parent, pose.as_ptr());
+                let px_link = physx_sys::PxArticulationReducedCoordinate_createLink_mut(px_articulation, parent, pose.as_ptr());
 
                 //handle
-                // let handle = physx.handles.rigid_actors.insert(px_link as *mut PxRigidActor);
-                // commands.entity(link.0).insert(PxRigidActorHandle(handle));
                 let handle = physx.insert_rigid_actor(link.0, px_link as *mut PxRigidActor);
                 commands.entity(link.0).insert(handle);
 
@@ -93,7 +94,7 @@ pub fn new_articulation(
 
 
 
-                {//todo: move actor setup
+                {//todo: move to actor setup
                     //mass
                     physx_sys::PxRigidBody_setMass_mut(px_link as *mut physx_sys::PxRigidBody, 1.0);
 
@@ -108,25 +109,41 @@ pub fn new_articulation(
             }
                 
             //px spawn
-            let px_aggregate = PxPhysics_createAggregate_mut(physx.foundation.physics_mut().as_mut_ptr() as *mut physx_sys::PxPhysics, 50, false);
-            physx_sys::PxAggregate_addArticulation_mut(px_aggregate, px_articulation);
+            // let filter_hint = physx_sys::phys_PxGetAggregateFilterHint(physx_sys::PxAggregateType::Generic, false);
+            // let px_aggregate = PxPhysics_createAggregate_mut(physx.foundation.physics_mut().as_mut_ptr() as *mut physx_sys::PxPhysics, 50, 50, filter_hint);
+            // physx_sys::PxAggregate_addArticulation_mut(px_aggregate, px_articulation);
             
-            physx_sys::PxScene_addAggregate_mut(physx.scene.as_mut_ptr(), px_aggregate);
-            
+            // physx_sys::PxScene_addAggregate_mut(physx.scene.as_mut_ptr(), px_aggregate);
+            // physx_sys::PxScene_addArticulation_mut(physx.scene.as_mut_ptr(), px_articulation);
         }
-
-        // articulation.create_link(None, ());
-
-
-        // let handle = physx.handles.articulations.insert(articulation.as_mut().as_mut_ptr());
-        // commands.entity(e).insert(PxArticulationHandle(handle));
-
-        // physx.scene.add_articulation(articulation);
 
     }
 
 }
-    
+
+
+pub fn add_articulation_system(
+    mut physx: ResMut<PhysX>,
+    query: Query<&PxArticulationHandle, Added<PxArticulationHandle>>,
+) {
+
+    for handle in query.iter() {
+
+        unsafe {
+
+            let px_articulation = *physx.handles.articulations.get(handle.0).unwrap();
+
+            let filter_hint = physx_sys::phys_PxGetAggregateFilterHint(physx_sys::PxAggregateType::Generic, false);
+            let px_aggregate = PxPhysics_createAggregate_mut(physx.foundation.physics_mut().as_mut_ptr() as *mut physx_sys::PxPhysics, 50, 50, filter_hint);
+            physx_sys::PxAggregate_addArticulation_mut(px_aggregate, px_articulation);
+
+            physx_sys::PxScene_addAggregate_mut(physx.scene.as_mut_ptr(), px_aggregate);
+            // physx_sys::PxScene_addArticulation_mut(physx.scene.as_mut_ptr(), px_articulation.clone());
+        }
+
+    }
+
+}
 
 //todo add more joint types
 pub enum PxJointAxis {
@@ -229,7 +246,7 @@ impl PxArticulationJoint {
 
 
 pub fn new_articulation_joint(
-    physx: ResMut<PhysXRes>,
+    physx: ResMut<PhysX>,
     query: Query<(&PxRigidActorHandle, &PxArticulationJoint), (Added<PxArticulationJoint>, Without<PxArticulationRootTag>)>,
 ) {
 
@@ -242,8 +259,8 @@ pub fn new_articulation_joint(
             let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link as *const PxArticulationLink_sys);
 
             //pose
-            physx_sys::PxArticulationJointBase_setParentPose_mut(px_joint, trans_to_physx(joint.parent_pose).as_ptr());
-            physx_sys::PxArticulationJointBase_setChildPose_mut(px_joint, trans_to_physx(joint.child_pose).as_ptr());
+            physx_sys::PxArticulationJointReducedCoordinate_setParentPose_mut(px_joint, trans_to_physx(joint.parent_pose).as_ptr());
+            physx_sys::PxArticulationJointReducedCoordinate_setChildPose_mut(px_joint, trans_to_physx(joint.child_pose).as_ptr());
 
             //save
             let px_joint_reduced = px_joint as *mut physx::prelude::ArticulationJointReducedCoordinate;

@@ -1,5 +1,5 @@
 use physx::prelude::*;
-use physx_sys::{PxFilterFlag, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxPairFlag};
+use physx_sys::{PxPairFlags, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxFilterFlags};
 
 
 //imports
@@ -8,15 +8,14 @@ pub type PxShape = physx::shape::PxShape<(), PxMaterial>;
 pub type PxArticulationLink = physx::articulation_link::PxArticulationLink<(), PxShape>;
 pub type PxRigidStatic = physx::rigid_static::PxRigidStatic<(), PxShape>;
 pub type PxRigidDynamic = physx::rigid_dynamic::PxRigidDynamic<(), PxShape>;
-pub type PxArticulation = physx::articulation::PxArticulation<(), PxArticulationLink>;
-pub type PxArticulationReducedCoordinate = physx::articulation_reduced_coordinate::PxArticulationReducedCoordinate<(), PxArticulationLink>;
+// pub type PxArticulation = physx::articulation::PxArticulation<(), PxArticulationLink>;
+type PxArticulationReducedCoordinate = physx::articulation_reduced_coordinate::PxArticulationReducedCoordinate<(), PxArticulationLink>;
 
-pub type PxScene = physx::scene::PxScene<
+pub(crate) type PxScene = physx::scene::PxScene<
     (),
     PxArticulationLink,
     PxRigidStatic,
     PxRigidDynamic,
-    PxArticulation,
     PxArticulationReducedCoordinate,
     OnCollision,
     OnTrigger,
@@ -29,29 +28,28 @@ pub type PxScene = physx::scene::PxScene<
 
 //custom collision filter
 pub unsafe extern "C" fn costum_filter_shader(
-    mut shader_cb_info: *mut FilterShaderCallbackInfo
-) -> u16 {
-
+    shader_cb_info: *mut FilterShaderCallbackInfo
+) -> PxFilterFlags {
+ 
     // let triggers through
     if phys_PxFilterObjectIsTrigger((*shader_cb_info).attributes0) || phys_PxFilterObjectIsTrigger((*shader_cb_info).attributes1) {
-        (*(*shader_cb_info).pairFlags).mBits = PxPairFlag::eTRIGGER_DEFAULT as u16;
-        return PxFilterFlag::eDEFAULT as u16;
+        (*(*shader_cb_info).pairFlags) = PxPairFlags::TriggerDefault;// PxPairFlag::TriggerDefault;
+        return PxFilterFlags::default();
     }
 
     // generate contacts for all that were not filtered above
-    (*(*shader_cb_info).pairFlags).mBits = PxPairFlag::eCONTACT_DEFAULT as u16;
+    (*(*shader_cb_info).pairFlags) = PxPairFlags::ContactDefault;
 
-    
 
     // trigger the contact callback for pairs (A,B) where
     // the filtermask of A contains the ID of B and vice versa.
     if  ((*shader_cb_info).filterData0.word1) != 0 && ((*shader_cb_info).filterData0.word1 == (*shader_cb_info).filterData1.word0) ||
         ((*shader_cb_info).filterData1.word1) != 0 && ((*shader_cb_info).filterData1.word1 == (*shader_cb_info).filterData0.word0) 
     {
-        return PxFilterFlag::eKILL as u16;
+        return PxFilterFlags::Kill;
     }
 
-    return PxFilterFlag::eDEFAULT as u16;
+    return PxFilterFlags::default();
 }
 
 

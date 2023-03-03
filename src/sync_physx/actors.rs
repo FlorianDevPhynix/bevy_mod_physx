@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::*, scene::Scene, traits::Class};
 
 use crate::helpers::physx_vec3;
-use crate::{PhysXRes, trans_to_physx};
+use crate::{PhysX, trans_to_physx};
 use crate::sync_physx::materials::PxMaterial;
 
 
@@ -13,7 +13,7 @@ pub struct PxDynamicActor;
 
 pub fn new_dyn_actor(
     mut commands: Commands,
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<(Entity, &Transform), Added<PxDynamicActor>>,
 ){ 
 
@@ -39,7 +39,7 @@ pub struct PxStaticActor;
 
 pub fn new_static_actor(
     mut commands: Commands,
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<(Entity, &Transform), Added<PxStaticActor>>,
 ){ 
 
@@ -86,7 +86,7 @@ impl Default for PxPlane{
     
 pub fn new_ground_plane(
     mut commands: Commands,
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<(Entity, &PxPlane, Option<&PxMaterial>), Added<PxPlane>>,
 ){ 
  

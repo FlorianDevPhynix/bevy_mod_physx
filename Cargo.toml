@@ -11,14 +11,14 @@ edition = "2021"
 bevy = { git = "https://github.com/bevyengine/bevy" }
 
 #physx
-physx = "0.16.1"
-physx-sys = "0.8.2"
+physx = "0.17.0"
+physx-sys = "0.10.0"
 
 #utils
 slotmap = "1.0"
 
 
-# [profile.debug.package.physx-sys]
+# [profile.dev.package.physx-sys]
 # debug = false
 
 [profile.release.package.physx-sys]
