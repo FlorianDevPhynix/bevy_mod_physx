@@ -28,7 +28,7 @@ pub fn setup(
     commands.spawn((
         PxDynamicActor,
         PxCollider::Sphere { radius: 0.5 },
-        PxMaterial { restitution: 2.0, static_friction: 0.0, dynamic_friction: 0.0 },
+        PxMaterial { restitution: 1.5, static_friction: 0.0, dynamic_friction: 0.0 },
         PxDamping { linear: 0.0, angular: 0.0 },
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere { radius: 0.5, ..default() } )),
@@ -43,7 +43,7 @@ pub fn setup(
     commands.spawn((
         PxDynamicActor,
         PxCollider::Sphere { radius: 0.5 },
-        PxMaterial { restitution: 2.0, static_friction: 0.0, dynamic_friction: 0.0 },
+        PxMaterial { restitution: 1.5, static_friction: 0.0, dynamic_friction: 0.0 },
         PxDamping { linear: 1.0, angular: 1.0 },
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere { radius: 0.5, ..default() } )),

@@ -45,12 +45,12 @@ pub fn setup(mut commands: Commands) {
 * [x] Collision shapes (box, sphere, capsule)
 * [x] Raycasts (only single)
 * [x] PxMaterial (friction, restitution)
+* [x] Some rigid body properties (external forces, velocity, damping)
 * [x] Articulation (multi body joint simulation)
-* [x] External forces
-* [x] Velocity
+* [x] Some change detection (damping, material, external forces, articulation jont drive)
 
 ## Not yet implemented 
-* [ ] Rigid body properties (mass, dencity, linear damping, angular damping, com, ...)
+* [ ] Rigid body properties (mass, dencity, com, locked axis, ...)
 * [ ] Simple joints (fixed, revolute, prismatic, distance, spherical, ...)
 * [ ] Removal detection (remove actor when entity or component is removed)
 * [ ] Change detection (update physx when component is changed)
