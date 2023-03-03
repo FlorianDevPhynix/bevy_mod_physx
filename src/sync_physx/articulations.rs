@@ -249,6 +249,20 @@ impl PxArticulationJoint {
 
         self
     }
+
+    pub fn set_drive_targets_quat(&mut self, target_rot: Quat) -> &mut Self {
+
+        let (mut axis, angle) = target_rot.normalize().to_axis_angle(); //is normalize nessary?
+        axis *= angle;
+
+        for (i, drive) in self.drives.iter_mut().enumerate() {
+            if let Some(drive) = drive {
+                drive.target = axis[i];
+            }
+        }
+
+        self
+    }
 }
 
 

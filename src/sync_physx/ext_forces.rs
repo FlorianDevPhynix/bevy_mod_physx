@@ -58,7 +58,7 @@ impl PxExternalForce {
 }
 
 
-//todo: maybe add change filter
+//todo: test change detection bypass
 pub fn px_apply_forces(
     physx: Res<PhysX>,
     mut query: Query<(&PxRigidActorHandle, &mut PxExternalForce), (Changed<PxExternalForce>, Without<PxStaticActor>)>,
@@ -69,7 +69,7 @@ pub fn px_apply_forces(
         for (handle, mut force) in query.iter_mut() {
 
             let actor = *physx.handles.rigid_actors.get(handle.0).unwrap() as *mut physx_sys::PxRigidBody;
-
+            
             physx_sys::PxRigidBody_addForce_mut(actor, physx_vec3(force.force).as_ptr(), physx_sys::PxForceMode::Force, true);
             physx_sys::PxRigidBody_addTorque_mut(actor, physx_vec3(force.torque).as_ptr(), physx_sys::PxForceMode::Force, true);
 

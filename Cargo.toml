@@ -11,8 +11,8 @@ edition = "2021"
 bevy = { git = "https://github.com/bevyengine/bevy" }
 
 #physx
-physx = "0.17.0"
-physx-sys = "0.10.0"
+physx = "0.18.0"
+physx-sys = "0.11.0"
 
 #utils
 slotmap = "1.0"
