@@ -56,12 +56,12 @@ impl Plugin for PhysXPlugin {
             .add_systems(( //after flush
                 new_articulation_joint,
                 new_collider,
-                px_apply_forces, 
                 // update_changed_transform,
                 update_mass_properties_system,
                 update_damping_system,
                 update_articulation_joint_drive,
                 add_articulation_system,
+                px_apply_forces, 
             ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 
             //run physx

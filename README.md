@@ -50,7 +50,7 @@ pub fn setup(mut commands: Commands) {
 * [x] Some change detection (mass properties, damping, material, external forces, articulation joint drive)
 
 ## Not yet implemented 
-* [ ] Rigid body properties (gravity, com, locked axis, dominance, ...)
+* [ ] Rigid body properties (gravity, com, locked axis, dominance, sleeping)
 * [ ] Simple joints (fixed, revolute, prismatic, distance, spherical, ...)
 * [ ] Removal detection (remove actor when entity or component is removed)
 * [ ] Change detection (update physx when component is changed)
