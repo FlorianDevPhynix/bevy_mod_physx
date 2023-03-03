@@ -33,8 +33,8 @@ pub fn setup(mut commands: Commands) {
     // Spawn a dynamic rigid body
     commands.spawn(( 
         PxDynamicActor,
-        PxCollider::Box { half_extents: Vec3::new(0.5, 0.5, 0.5) },
-        Transform::from_translation(Vec3::new(0.0, 5.0, 0.0)),
+        PxCollider::Capsule { radius: 0.1, depth: 0.4},
+        Transform::from_translation(Vec3::new(0.0, 1.0, 0.0)),
     ));
 }
 ```
@@ -47,7 +47,7 @@ pub fn setup(mut commands: Commands) {
 * [x] PxMaterial (friction, restitution)
 * [x] Some rigid body properties (mass properties, external forces, velocity, damping)
 * [x] Articulation (multi body joint simulation)
-* [x] Some change detection (damping, material, external forces, articulation joint drive)
+* [x] Some change detection (mass properties, damping, material, external forces, articulation joint drive)
 
 ## Not yet implemented 
 * [ ] Rigid body properties (gravity, com, locked axis, dominance, ...)
