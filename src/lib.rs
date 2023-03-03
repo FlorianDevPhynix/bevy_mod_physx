@@ -10,8 +10,8 @@ use physx::{physics::PhysicsFoundationBuilder, foundation::DefaultAllocator};
 mod helpers;
 use helpers::*;
 
-pub mod custom;
-pub use custom::*;
+mod custom;
+use custom::*;
 use custom::PxScene;
 
 pub mod sync_physx;
@@ -20,13 +20,19 @@ pub use sync_physx::*;
 pub mod sync_bevy;
 pub use sync_bevy::*;
 
-pub mod handles;
-pub use handles::*;
+mod handles;
+use handles::*;
 
-pub mod debug_render;
-pub use debug_render::*;
+// mod debug_render;
+// use debug_render::*;
 
 
+pub mod prelude {
+    pub use crate::sync_bevy::*;
+    pub use crate::sync_physx::*;
+    pub use crate::PhysXPlugin;
+    pub use crate::PhysX;
+}
 
 
 pub struct PhysXPlugin;
@@ -52,7 +58,7 @@ impl Plugin for PhysXPlugin {
                 new_articulation_joint,
                 new_collider,
                 px_apply_forces, 
-                //px_set_joints,
+                update_articulation_joint_drive,
                 add_articulation_system,
             ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 
@@ -60,7 +66,7 @@ impl Plugin for PhysXPlugin {
             .add_system(px_step_simulation.in_base_set(PhysXPipelineSet::RunPhysx).after(PhysXPipelineSet::AfterFlush) )
 
             //sync bevy
-            .add_systems(( //todo: run if changed
+            .add_systems(( //todo: run if changed maybe
                 sync_bevy::transform::px_sync_transforms, 
                 sync_bevy::velocity::px_write_velocitys
             ).in_base_set(PhysXPipelineSet::SyncBevy).after(PhysXPipelineSet::RunPhysx))

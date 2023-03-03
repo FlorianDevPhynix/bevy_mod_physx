@@ -11,7 +11,7 @@ use crate::trans_to_physx;
 
 #[derive(Component)]
 pub enum PxCollider {
-    Box{half_extents: Vec3},
+    Box{size: Vec3},
     Sphere{radius: f32},
     Capsule{radius: f32, depth: f32},
 }
@@ -59,9 +59,9 @@ pub fn new_collider(
             
 
             match collider {
-                PxCollider::Box{ half_extents } => {
+                PxCollider::Box{ size } => {
 
-                    let geom = PxBoxGeometry::new(half_extents.x, half_extents.y, half_extents.z);
+                    let geom = PxBoxGeometry::new(size.x / 2.0, size.y / 2.0, size.z / 2.0);
 
                     let shape = physx_sys::PxRigidActorExt_createExclusiveShape_1(actor, geom.as_ptr(), px_material.as_ptr(), flags);
 

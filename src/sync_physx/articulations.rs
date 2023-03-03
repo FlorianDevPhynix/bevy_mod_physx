@@ -184,6 +184,7 @@ pub enum PxJointMotion {
 
 #[derive(Default, Clone, Copy)]
 pub struct PxJointDrive {
+    pub target: f32,
     pub stiffness: f32,
     pub damping: f32,
     pub force_limit: f32,
@@ -241,6 +242,17 @@ impl PxArticulationJoint {
         self.drives = [Some(drive); 3];
         self
     }
+
+    pub fn set_drive_targets(&mut self, target: Vec3) -> &mut Self {
+
+        for (i, drive) in self.drives.iter_mut().enumerate() {
+            if let Some(drive) = drive {
+                drive.target = target[i];
+            }
+        }
+
+        self
+    }
 }
 
 
@@ -286,6 +298,7 @@ pub fn new_articulation_joint(
             //drive
             for (i, drive) in joint.drives.iter().enumerate() {
                 if let Some(drive) = drive {
+                    (*px_joint_reduced).set_drive_target(drive.target, to_axis(i));
                     (*px_joint_reduced).set_drive(to_axis(i), drive.stiffness, drive.damping, drive.force_limit, ArticulationDriveType::Acceleration);
                 }
             }
@@ -298,6 +311,37 @@ pub fn new_articulation_joint(
 
 }
 
+
+
+pub fn update_articulation_joint_drive(
+    physx: ResMut<PhysX>,
+    query: Query<(&PxRigidActorHandle, &PxArticulationJoint), (Changed<PxArticulationJoint>, Without<PxArticulationRootTag>)>,
+) {
+
+    unsafe {
+
+        for (handle, joint) in query.iter() {
+
+            //get joint from link at set based on joint type
+            let px_link = *physx.handles.rigid_actors.get(handle.0).unwrap();
+            let px_joint = physx_sys::PxArticulationLink_getInboundJoint(px_link as *const PxArticulationLink_sys);
+
+            let px_joint_reduced = px_joint as *mut physx::prelude::ArticulationJointReducedCoordinate;
+
+            //drive
+            for (i, drive) in joint.drives.iter().enumerate() {
+                if let Some(drive) = drive {
+                    (*px_joint_reduced).set_drive_target(drive.target, to_axis(i));
+                    (*px_joint_reduced).set_drive(to_axis(i), drive.stiffness, drive.damping, drive.force_limit, ArticulationDriveType::Acceleration);
+                }
+            }
+
+            
+        }
+
+    }
+
+}
 
 
 

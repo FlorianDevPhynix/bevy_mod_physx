@@ -33,3 +33,14 @@ pub fn trans_to_physx(
 
     return px_trans;
 }
+
+
+// pub fn trans_from_physx(
+//     trans: PxTransform,
+// ) -> bevy::prelude::Transform {
+
+//     let translation = vec3_from_pxvec3(vec3_from_pxvec3(*trans.translation()));
+//     let quat = Quat::fro
+    
+//     return Transform::from_matrix(matrix);
+// }
