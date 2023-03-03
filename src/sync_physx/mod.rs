@@ -21,3 +21,6 @@ pub use change::*;
 pub mod dampings; 
 pub use dampings::*; 
 
+pub mod mass_properties; 
+pub use mass_properties::*; 
+

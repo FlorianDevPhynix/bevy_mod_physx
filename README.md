@@ -1,5 +1,5 @@
 # bevy_physx
-Bevy plugin for NVIDIA PhysX.    
+Bevy plugin for NVIDIA PhysX using Bindings XXX.    
 Current PhysX version: 5.1.3
 
 ### Disclaimer
@@ -45,15 +45,16 @@ pub fn setup(mut commands: Commands) {
 * [x] Collision shapes (box, sphere, capsule)
 * [x] Raycasts (only single)
 * [x] PxMaterial (friction, restitution)
-* [x] Some rigid body properties (external forces, velocity, damping)
+* [x] Some rigid body properties (mass properties, external forces, velocity, damping)
 * [x] Articulation (multi body joint simulation)
-* [x] Some change detection (damping, material, external forces, articulation jont drive)
+* [x] Some change detection (damping, material, external forces, articulation joint drive)
 
 ## Not yet implemented 
-* [ ] Rigid body properties (mass, dencity, com, locked axis, ...)
+* [ ] Rigid body properties (gravity, com, locked axis, dominance, ...)
 * [ ] Simple joints (fixed, revolute, prismatic, distance, spherical, ...)
 * [ ] Removal detection (remove actor when entity or component is removed)
 * [ ] Change detection (update physx when component is changed)
+* [ ] Scene settings (gravity, ...)
 * [ ] Collision shapes (convex, triangle mesh, heightfield)
 * [ ] Collision filtering (collision groups, collision masks)
 * [ ] Scene query (overlap, sweep)

@@ -97,10 +97,6 @@ pub fn new_articulation(
                 {//todo: move to actor setup
                     //mass
                     physx_sys::PxRigidBody_setMass_mut(px_link as *mut physx_sys::PxRigidBody, 1.0);
-
-                    //damping
-                    physx_sys::PxRigidBody_setLinearDamping_mut(px_link as *mut physx_sys::PxRigidBody, 0.1);
-                    physx_sys::PxRigidBody_setAngularDamping_mut(px_link as *mut physx_sys::PxRigidBody, 0.1);
                 }
 
 

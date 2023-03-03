@@ -58,8 +58,9 @@ impl Plugin for PhysXPlugin {
                 new_articulation_joint,
                 new_collider,
                 px_apply_forces, 
-                update_articulation_joint_drive,
+                update_mass_properties_system,
                 update_damping_system,
+                update_articulation_joint_drive,
                 add_articulation_system,
             ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 

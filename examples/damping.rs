@@ -24,12 +24,24 @@ pub fn setup(
 ) {
 
 
+    // plane
+    commands.spawn((
+        PxPlane::default(),
+        PxMaterial { restitution: 1.0, static_friction: 0.0, dynamic_friction: 0.0 },
+        PbrBundle {
+            mesh: meshes.add(shape::Plane::from_size(1000.0).into()),
+            material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+            ..default()
+        }
+    ));
+
+
     //no damping
     commands.spawn((
         PxDynamicActor,
         PxCollider::Sphere { radius: 0.5 },
-        PxMaterial { restitution: 1.5, static_friction: 0.0, dynamic_friction: 0.0 },
         PxDamping { linear: 0.0, angular: 0.0 },
+        PxMaterial { restitution: 1.0, static_friction: 0.0, dynamic_friction: 0.0 },
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere { radius: 0.5, ..default() } )),
             material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
@@ -43,8 +55,8 @@ pub fn setup(
     commands.spawn((
         PxDynamicActor,
         PxCollider::Sphere { radius: 0.5 },
-        PxMaterial { restitution: 1.5, static_friction: 0.0, dynamic_friction: 0.0 },
         PxDamping { linear: 1.0, angular: 1.0 },
+        PxMaterial { restitution: 1.0, static_friction: 0.0, dynamic_friction: 0.0 },
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere { radius: 0.5, ..default() } )),
             material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
@@ -53,18 +65,6 @@ pub fn setup(
         } 
     ));
 
-
-    // plane
-    commands.spawn((
-        PxPlane::default(),
-        PbrBundle {
-            mesh: meshes.add(shape::Plane::from_size(1000.0).into()),
-            material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-            ..default()
-        }
-    ));
-
- 
  
     // camera 
     commands.spawn(Camera3dBundle {
