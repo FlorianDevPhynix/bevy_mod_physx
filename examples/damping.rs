@@ -17,9 +17,6 @@ fn main() {
 }
 
 
-
-
-
 pub fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -27,31 +24,33 @@ pub fn setup(
 ) {
 
 
-    //high restitution
+    //no damping
     commands.spawn((
         PxDynamicActor,
         PxCollider::Sphere { radius: 0.5 },
-        PxMaterial { static_friction: 0.0, dynamic_friction: 0.0, restitution: 2.0 },
+        PxMaterial { restitution: 2.0, static_friction: 0.0, dynamic_friction: 0.0 },
+        PxDamping { linear: 0.0, angular: 0.0 },
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere { radius: 0.5, ..default() } )),
             material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
-            transform: Transform::from_xyz(-2.0, 10.0, 0.0),
+            transform: Transform::from_xyz(-2.0, 7.0, 0.0),
             ..default()
         } 
     ));
-     
+      
  
-    //small restitution
+    //high damping
     commands.spawn((
         PxDynamicActor,
         PxCollider::Sphere { radius: 0.5 },
-        PxMaterial { restitution: 0.1, ..default() },
+        PxMaterial { restitution: 2.0, static_friction: 0.0, dynamic_friction: 0.0 },
+        PxDamping { linear: 1.0, angular: 1.0 },
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere { radius: 0.5, ..default() } )),
             material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
-            transform: Transform::from_xyz(2.0, 10.0, 0.0),
+            transform: Transform::from_xyz(2.0, 7.0, 0.0),
             ..default()
-        }
+        } 
     ));
 
 

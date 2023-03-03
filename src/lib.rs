@@ -59,6 +59,7 @@ impl Plugin for PhysXPlugin {
                 new_collider,
                 px_apply_forces, 
                 update_articulation_joint_drive,
+                update_damping_system,
                 add_articulation_system,
             ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush).chain())
 
@@ -165,7 +166,6 @@ impl PhysX {
     }
 
 }
-
 
 
 const PHYSXSTEP: f32 = 1.0 / 60.0;
