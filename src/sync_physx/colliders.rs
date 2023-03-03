@@ -4,7 +4,7 @@ use physx::{prelude::*, traits::Class};
 
 use crate::sync_physx::materials::PxMaterial;
 use crate::PxPlane;
-use crate::PhysXRes;
+use crate::PhysX;
 use crate::PxRigidActorHandle;
 use crate::trans_to_physx;
 
@@ -19,7 +19,7 @@ pub enum PxCollider {
 
 
 pub fn new_collider(
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<(Entity, &PxCollider, Option<&PxMaterial>, Option<&PxRigidActorHandle>), (Added<PxCollider>, Without<PxPlane>)>,
     parent_q: Query<(&Parent, &Transform)>,
     actor_handle_q: Query<&PxRigidActorHandle>,

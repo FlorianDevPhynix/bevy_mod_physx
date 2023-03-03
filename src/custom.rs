@@ -1,5 +1,5 @@
 use physx::prelude::*;
-use physx_sys::{PxFilterFlag, PxPairFlags, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxFilterFlags};
+use physx_sys::{PxPairFlags, FilterShaderCallbackInfo, phys_PxFilterObjectIsTrigger, PxFilterFlags};
 
 
 //imports

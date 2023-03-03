@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use physx::prelude::*;
 
-use crate::{PhysXRes, PxRigidDynamic, PxRigidActorHandle, PxDynamicActor};
+use crate::{PhysX, PxRigidDynamic, PxRigidActorHandle, PxDynamicActor};
 use crate::sync_physx::articulations::PxArticulationLink;
 
 
@@ -10,7 +10,7 @@ use crate::sync_physx::articulations::PxArticulationLink;
 
 //positions
 pub fn px_sync_transforms(   
-    physx: Res<PhysXRes>,
+    physx: Res<PhysX>,
     mut query: Query<(&PxRigidActorHandle, &mut Transform), Or<(With<PxDynamicActor>, With<PxArticulationLink>)>>,
 ){
     

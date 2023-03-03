@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use physx::{prelude::{ArticulationJointType, ArticulationAxis, ArticulationMotion, ArticulationDriveType}, traits::Class};
 use physx_sys::{PxPhysics_createAggregate_mut, PxRigidActor, PxArticulationLink as PxArticulationLink_sys};
  
-use crate::{PhysXRes, trans_to_physx, PxRigidActorHandle, PxArticulationHandle};
+use crate::{PhysX, trans_to_physx, PxRigidActorHandle, PxArticulationHandle};
 
 
 
@@ -48,7 +48,7 @@ pub struct PxArticulationRootTag;
 
 pub fn new_articulation(
     mut commands: Commands,
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<(Entity, &PxArticulation), Added<PxArticulation>>,
     link_q: Query<&PxArticulationLink>,
 ) {
@@ -123,7 +123,7 @@ pub fn new_articulation(
 
 
 pub fn add_articulation_system(
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     query: Query<&PxArticulationHandle, Added<PxArticulationHandle>>,
 ) {
 
@@ -246,7 +246,7 @@ impl PxArticulationJoint {
 
 
 pub fn new_articulation_joint(
-    physx: ResMut<PhysXRes>,
+    physx: ResMut<PhysX>,
     query: Query<(&PxRigidActorHandle, &PxArticulationJoint), (Added<PxArticulationJoint>, Without<PxArticulationRootTag>)>,
 ) {
 

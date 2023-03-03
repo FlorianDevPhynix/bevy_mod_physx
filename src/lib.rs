@@ -81,17 +81,6 @@ enum PhysXPipelineSet {
 }
 
 
-#[derive(Resource)]
-pub struct PhysXRes {
-    foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
-    scene: Owner<PxScene>,
-    actor_to_entity: HashMap<*mut physx_sys::PxRigidActor, Entity>,
-    handles: Handels,
-}
-unsafe impl Send for PhysXRes {}
-unsafe impl Sync for PhysXRes {}
-
-
 #[derive(Debug, Clone)]
 pub struct RaycastHit {
     pub entity: Entity,
@@ -100,7 +89,19 @@ pub struct RaycastHit {
     pub normal: Vec3,
 }
 
-impl PhysXRes {
+#[derive(Resource)]
+pub struct PhysX {
+    foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
+    scene: Owner<PxScene>,
+    actor_to_entity: HashMap<*mut physx_sys::PxRigidActor, Entity>,
+    handles: Handels,
+}
+unsafe impl Send for PhysX {}
+unsafe impl Sync for PhysX {}
+
+
+
+impl PhysX {
 
     fn insert_rigid_actor(&mut self, entity: Entity, actor: *mut physx_sys::PxRigidActor) -> PxRigidActorHandle {
 
@@ -165,7 +166,7 @@ const PHYSXSTEP: f32 = 1.0 / 60.0;
 
 //run physx
 fn px_step_simulation(   
-    mut physx: ResMut<PhysXRes>,
+    mut physx: ResMut<PhysX>,
     time: Res<Time>,
     mut accumilator: Local<f32>,
 ){
@@ -217,7 +218,7 @@ fn setup_physx(
 
     let handles = Handels::default();
 
-    commands.insert_resource(PhysXRes{ foundation, scene, handles, actor_to_entity: HashMap::new() });
+    commands.insert_resource(PhysX{ foundation, scene, handles, actor_to_entity: HashMap::new() });
 }
 
 

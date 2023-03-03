@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use physx::traits::Class;
 
 use crate::helpers::trans_to_physx;
-use crate::{PhysXRes, PxRigidActorHandle, PxPlane};
+use crate::{PhysX, PxRigidActorHandle, PxPlane};
 
 
 
@@ -11,7 +11,7 @@ use crate::{PhysXRes, PxRigidActorHandle, PxPlane};
 
 //positions
 pub fn set_changed_transform(//dosent work yet
-    physx: Res<PhysXRes>,
+    physx: Res<PhysX>,
     mut query: Query<(&PxRigidActorHandle, &Transform), (Changed<Transform>, Without<PxPlane>)>,
 ){
     
