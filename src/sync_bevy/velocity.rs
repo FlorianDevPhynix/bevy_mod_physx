@@ -8,8 +8,10 @@ use crate::sync_physx::articulations::PxArticulationLink;
 
 
 //velocitys
+//read only for now
+//setLinearVelocity is missing in physx-sys
 #[derive(Component, Default)] 
-pub struct PxVelocity {//read only for now
+pub struct PxVelocity {
     liniar: Vec3,
     angular: Vec3,
 }
@@ -43,7 +45,6 @@ impl PxVelocity {
 pub fn px_write_velocitys(
     physx: Res<PhysX>,
     mut query: Query<(&PxRigidActorHandle, &mut PxVelocity), Or<(With<PxDynamicActor>, With<PxArticulationLink>)>>,
-    // time: Res<Time>,
 ){
 
     for (handle, mut velocity) in query.iter_mut() {
