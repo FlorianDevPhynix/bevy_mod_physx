@@ -1,4 +1,4 @@
-# bevy_physx
+# bevy_mod_physx
 Bevy plugin for NVIDIA PhysX using Bindings XXX.    
 Current PhysX version: 5.1.3
 
@@ -9,13 +9,13 @@ Open for pull requests and issues.
 ## Usage
 ```toml
 [dependencies]
-bevy_physx = "0.1"
+bevy_mod_physx = "0.1"
 ```
 
 ## Example
 ```rust
 use bevy::prelude::*;
-use bevy_physx::prelude::*;
+use bevy_mod_physx::prelude::*;
 
 fn main() {
     App::build()
@@ -62,9 +62,9 @@ pub fn setup(mut commands: Commands) {
 * [ ] And more...
 
 ## Compatibility
-Compatibility of `bevy_physx` versions:
+Compatibility of `bevy_mod_physx` versions:
 
-| `bevy_physx`  | `bevy` |
+| `bevy_mod_physx`  | `bevy` |
 | :--           | :--    |
 | `0.1`         | `0.10` |
 

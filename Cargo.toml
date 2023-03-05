@@ -1,5 +1,5 @@
 [package]
-name = "bevy_physx"
+name = "bevy_mod_physx"
 version = "0.1.0"
 edition = "2021"
 

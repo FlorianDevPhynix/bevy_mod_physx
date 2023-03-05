@@ -1,7 +1,7 @@
 use std::f32::consts::FRAC_PI_4;
 
 use bevy::prelude::*;
-use bevy_physx::prelude::*;
+use bevy_mod_physx::prelude::*;
 
 
 fn main() {
@@ -51,7 +51,7 @@ pub fn setup(
 
  
     commands.entity(root).insert((
-        PxMassProperties::Density(100.0),
+        PxMassProperties::Density(10000.0),
         PxCollider::Box { size: Vec3::splat(0.5)},
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::Box::new(0.5, 0.5, 0.5))),
@@ -73,7 +73,7 @@ pub fn setup(
 
 
     commands.entity(part_2_1).insert((
-        PxMassProperties::Density(20.0),
+        PxMassProperties::Density(1000.0),
         PxCollider::Sphere { radius: 0.2 },
         PbrBundle { mesh: part_mesh.clone(), material: part_material.clone(), ..default() },
         PxArticulationJoint::new(PxJointType::Spherical)

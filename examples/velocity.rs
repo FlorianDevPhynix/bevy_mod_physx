@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_physx::prelude::*;
+use bevy_mod_physx::prelude::*;
 
 
 fn main() {
