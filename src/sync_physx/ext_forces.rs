@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use physx::traits::Class;
 
 use crate::{PxStaticActor};
-use crate::{helpers::physx_vec3, PhysX, PxRigidActorHandle};
+use crate::{helpers::vec3_to_physx, PhysX, PxRigidActorHandle};
 
 
 
@@ -70,8 +70,8 @@ pub fn px_apply_forces(
 
             let actor = *physx.handles.rigid_actors.get(handle.0).unwrap() as *mut physx_sys::PxRigidBody;
             
-            physx_sys::PxRigidBody_addForce_mut(actor, physx_vec3(force.force).as_ptr(), physx_sys::PxForceMode::Force, true);
-            physx_sys::PxRigidBody_addTorque_mut(actor, physx_vec3(force.torque).as_ptr(), physx_sys::PxForceMode::Force, true);
+            physx_sys::PxRigidBody_addForce_mut(actor, vec3_to_physx(force.force).as_ptr(), physx_sys::PxForceMode::Force, true);
+            physx_sys::PxRigidBody_addTorque_mut(actor, vec3_to_physx(force.torque).as_ptr(), physx_sys::PxForceMode::Force, true);
 
             force.bypass_change_detection().clear();
         }

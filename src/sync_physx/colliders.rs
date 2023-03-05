@@ -102,22 +102,3 @@ pub fn new_collider(
 }
 
 
-
-
-
-// unsafe fn get_actor(physx: &mut PhysXRes, opt_static: Option<&PxStaticRigidBodyHandle>, opt_dyn: Option<&PxDynamicRigidBodyHandle>, opt_link: Option<&PxArticulationLinkHandle>) -> *mut physx_sys::PxRigidActor {
-    
-//         if let Some(handle) = opt_static {
-//             return *physx.handles.static_actors.get(handle.0).unwrap() as *mut physx_sys::PxRigidActor;
-//         }
-    
-//         if let Some(handle) = opt_dyn {
-//             return *physx.handles.dynamic_actors.get(handle.0).unwrap() as *mut physx_sys::PxRigidActor;
-//         }
-    
-//         if let Some(handle) = opt_link {
-//             return *physx.handles.articulation_links.get(handle.0).unwrap() as *mut physx_sys::PxRigidActor;
-//         }
-    
-//         panic!("No actor found for collider!");
-// }

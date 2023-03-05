@@ -9,7 +9,7 @@ Open for pull requests and issues.
 ## Usage
 ```toml
 [dependencies]
-bevy_mod_physx = "0.1"
+bevy_mod_physx = "0.1.0"
 ```
 
 ## Example

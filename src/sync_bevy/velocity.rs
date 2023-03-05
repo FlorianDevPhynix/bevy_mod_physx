@@ -37,12 +37,10 @@ impl PxVelocity {
 
     }
 
-
-
 }
 
 
-pub fn px_write_velocitys(
+pub fn sync_velocitys(
     physx: Res<PhysX>,
     mut query: Query<(&PxRigidActorHandle, &mut PxVelocity), Or<(With<PxDynamicActor>, With<PxArticulationLink>)>>,
 ){

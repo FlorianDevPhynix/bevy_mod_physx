@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use physx::traits::Class;
-use crate::{prelude::*, handles::PxRigidActorHandle, helpers::physx_vec3};
+use crate::{prelude::*, handles::PxRigidActorHandle, helpers::vec3_to_physx};
 
 
 #[derive(Component)]
@@ -27,7 +27,7 @@ pub fn update_mass_properties_system(
                     physx_sys::PxRigidBody_setMass_mut(actor as *mut physx_sys::PxRigidBody, *mass);
                 },
                 PxMassProperties::Density(density) => {
-                    physx_sys::PxRigidBodyExt_updateMassAndInertia_1(actor as *mut physx_sys::PxRigidBody, *density, physx_vec3(Vec3::ZERO).as_ptr(), false);
+                    physx_sys::PxRigidBodyExt_updateMassAndInertia_1(actor as *mut physx_sys::PxRigidBody, *density, vec3_to_physx(Vec3::ZERO).as_ptr(), false);
                 },
             }
 

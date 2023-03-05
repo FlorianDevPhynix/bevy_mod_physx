@@ -1,24 +1,20 @@
 use std::collections::HashMap;
 
 use bevy::prelude::*;
- 
-use physx::prelude::*;
-use physx::scene::Scene;
-use physx::traits::Class;
-use physx::{physics::PhysicsFoundationBuilder, foundation::DefaultAllocator};
+use physx::{prelude::*, physics::PhysicsFoundationBuilder, foundation::DefaultAllocator, traits::Class, scene::Scene};
+
 
 mod helpers;
 use helpers::*;
 
 mod custom;
 use custom::*;
-use custom::PxScene;
 
-pub mod sync_physx;
-pub use sync_physx::*;
+mod sync_physx;
+use sync_physx::*;
 
-pub mod sync_bevy;
-pub use sync_bevy::*;
+mod sync_bevy;
+use sync_bevy::*;
 
 mod handles;
 use handles::*;
@@ -28,10 +24,11 @@ use handles::*;
 
 
 pub mod prelude {
-    pub use crate::sync_bevy::*;
-    pub use crate::sync_physx::*;
     pub use crate::PhysXPlugin;
     pub use crate::PhysX;
+    pub use crate::RaycastHit;
+    pub use crate::sync_bevy::*;
+    pub use crate::sync_physx::*;
 }
 
 
@@ -69,8 +66,8 @@ impl Plugin for PhysXPlugin {
 
             //sync bevy
             .add_systems(( //todo: run if changed maybe
-                sync_bevy::transform::px_sync_transforms, 
-                sync_bevy::velocity::px_write_velocitys
+                sync_transforms, 
+                sync_velocitys
             ).in_base_set(PhysXPipelineSet::SyncBevy).after(PhysXPipelineSet::RunPhysx))
             ;
 
@@ -132,8 +129,8 @@ impl PhysX {
  
             if physx_sys::PxSceneQueryExt_raycastSingle(
                 self.scene.as_mut_ptr(),
-                physx_vec3(origin).as_ptr(),
-                physx_vec3(direction).as_ptr(),
+                vec3_to_physx(origin).as_ptr(),
+                vec3_to_physx(direction).as_ptr(),
                 max_distance,
                 physx_sys::PxHitFlags::Default,
                 hit.as_mut_ptr(),
@@ -149,8 +146,8 @@ impl PhysX {
                         return Some(RaycastHit { 
                             entity: *entity, 
                             distance: hit.distance, 
-                            position: vec3_from_pxvec3(hit.position), 
-                            normal: vec3_from_pxvec3(hit.normal), 
+                            position: vec3_from_physx(hit.position), 
+                            normal: vec3_from_physx(hit.normal), 
                         });
                     }
                     None => {

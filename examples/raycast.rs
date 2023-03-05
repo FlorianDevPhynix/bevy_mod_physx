@@ -51,7 +51,7 @@ pub fn setup(
     commands.spawn((
         PxDynamicActor,
         PxCollider::Box { size: Vec3::splat(1.0) },
-        bevy_mod_physx::sync_physx::materials::PxMaterial{restitution: 1.0, ..default()},
+        PxMaterial{restitution: 1.0, ..default()},
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::Cube{ size: 1.0 })),
             material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),

@@ -1,17 +1,13 @@
 use bevy::prelude::*;
-
 use physx::prelude::*;
-// use physx::scene::Scene;
-// use physx::traits::Class;
 
-use crate::{PhysX, PxRigidDynamic, PxRigidActorHandle, PxDynamicActor};
-use crate::sync_physx::articulations::PxArticulationLink;
+use crate::{PhysX, PxRigidDynamic, PxRigidActorHandle, PxDynamicActor, prelude::articulations::PxArticulationLink};
 
 
 
 
 //positions
-pub fn px_sync_transforms(   
+pub fn sync_transforms(   
     physx: Res<PhysX>,
     mut query: Query<(&PxRigidActorHandle, &mut Transform), Or<(With<PxDynamicActor>, With<PxArticulationLink>)>>,
 ){

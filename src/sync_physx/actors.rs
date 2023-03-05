@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use physx::{prelude::*, scene::Scene, traits::Class};
 
-use crate::helpers::physx_vec3;
+use crate::helpers::vec3_to_physx;
 use crate::{PhysX, trans_to_physx};
 use crate::sync_physx::materials::PxMaterial;
 
@@ -101,7 +101,7 @@ pub fn new_ground_plane(
 
 
         let mut ground_plane = physx.foundation.physics_mut()
-            .create_plane(physx_vec3(plane.normal), plane.offset, px_material.as_mut(), ())
+            .create_plane(vec3_to_physx(plane.normal), plane.offset, px_material.as_mut(), ())
             .unwrap();
             
 

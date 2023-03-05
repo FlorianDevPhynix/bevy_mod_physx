@@ -8,7 +8,7 @@ use crate::{PhysXPipelineSet};
 
 
 
-pub struct PhysXDebugRenderPlugin;
+struct PhysXDebugRenderPlugin;
 
 impl Plugin for PhysXDebugRenderPlugin {
 
@@ -19,7 +19,7 @@ impl Plugin for PhysXDebugRenderPlugin {
     }
 }
 
-//todo: dosent work
+//todo
 pub fn physx_debug_render(
     // mut physx: ResMut<PhysXRes>
 ) {

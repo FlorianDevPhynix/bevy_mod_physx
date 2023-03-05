@@ -92,25 +92,10 @@ pub fn new_articulation(
                 map.insert(link.0, px_link);
 
 
-
-
-                {//todo: move to actor setup
-                    //mass
-                    physx_sys::PxRigidBody_setMass_mut(px_link as *mut physx_sys::PxRigidBody, 1.0);
-                }
-
-
                 if parent.is_null() {continue;}
 
             }
                 
-            //px spawn
-            // let filter_hint = physx_sys::phys_PxGetAggregateFilterHint(physx_sys::PxAggregateType::Generic, false);
-            // let px_aggregate = PxPhysics_createAggregate_mut(physx.foundation.physics_mut().as_mut_ptr() as *mut physx_sys::PxPhysics, 50, 50, filter_hint);
-            // physx_sys::PxAggregate_addArticulation_mut(px_aggregate, px_articulation);
-            
-            // physx_sys::PxScene_addAggregate_mut(physx.scene.as_mut_ptr(), px_aggregate);
-            // physx_sys::PxScene_addArticulation_mut(physx.scene.as_mut_ptr(), px_articulation);
         }
 
     }
@@ -199,8 +184,6 @@ pub struct PxArticulationJoint {
 
 
 
-
-// impl a building pattern for articulationJoint 
 impl PxArticulationJoint {
     pub fn new(joint_type: PxJointType) -> Self {
         Self {

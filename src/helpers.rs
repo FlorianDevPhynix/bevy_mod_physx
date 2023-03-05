@@ -12,12 +12,12 @@ pub fn physx_pose(x: f32, y: f32, z: f32) -> physx::math::PxTransform{
 }
 
 
-pub fn physx_vec3(vec: Vec3) -> physx::math::PxVec3{
+pub fn vec3_to_physx(vec: Vec3) -> physx::math::PxVec3{
     return physx::math::PxVec3::new(vec.x, vec.y, vec.z);
 }
 
 
-pub fn vec3_from_pxvec3(vec: physx_sys::PxVec3) -> Vec3{
+pub fn vec3_from_physx(vec: physx_sys::PxVec3) -> Vec3{
     return Vec3::new(vec.x, vec.y, vec.z);
 }
 
