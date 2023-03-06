@@ -10,7 +10,7 @@ edition = "2021"
  
 [dependencies]
 #bevy
-bevy = { git = "https://github.com/bevyengine/bevy" }
+bevy =  "0.10.0"
 
 #physx
 physx = "0.18.0"
