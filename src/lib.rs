@@ -105,6 +105,18 @@ unsafe impl Send for PhysX {}
 unsafe impl Sync for PhysX {}
 
 
+impl Drop for PhysX {
+    fn drop(&mut self) {
+        unsafe {
+            // physx_sys::phys_PxCloseExtensions();
+            physx_sys::PxScene_release_mut(self.scene.as_mut_ptr());
+            physx_sys::PxPhysics_release_mut(self.foundation.physics_mut().as_mut_ptr());
+            physx_sys::PxFoundation_release_mut(self.foundation.foundation_mut().as_mut_ptr());
+        }
+
+    }
+}
+
 
 impl PhysX {
 
