@@ -59,7 +59,7 @@ pub fn new_static_actor(
 
 
 //static ground plane
-#[derive(Component)]
+#[derive(Component, Reflect)]
 pub struct PxPlane{
     normal: Vec3,
     offset: f32,

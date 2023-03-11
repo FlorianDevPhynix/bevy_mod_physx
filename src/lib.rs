@@ -37,6 +37,9 @@ pub struct PhysXPlugin;
 impl Plugin for PhysXPlugin {
     fn build(&self, app: &mut App) {
         app 
+            //register
+            .register_type::<PxPlane>()
+
             //setup physx
             .add_startup_system(setup_physx)
 
