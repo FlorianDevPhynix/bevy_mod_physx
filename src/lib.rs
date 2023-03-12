@@ -48,10 +48,10 @@ impl Plugin for PhysXPlugin {
                 new_ground_plane,
                 new_static_actor, 
                 new_dyn_actor, 
-                new_articulation, //todo add articulation to scene after setting joints
-            ).in_base_set(PhysXPipelineSet::BeforeFlush).chain())
+                new_articulation,
+            ).after(CoreSet::UpdateFlush).in_base_set(PhysXPipelineSet::BeforeFlush).chain())
 
-            .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush)) //clear commands for new components
+            .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush))
 
             .add_systems(( //after flush
                 new_articulation_joint,
