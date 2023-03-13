@@ -1,5 +1,5 @@
 # bevy_mod_physx
-Bevy plugin for NVIDIA PhysX using Bindings XXX.    
+Bevy plugin for [NVIDIA PhysX](https://github.com/NVIDIA-Omniverse/PhysX) using  [EmbarkStudios Bindings](https://github.com/EmbarkStudios/physx-rs).    
 Current PhysX version: 5.1.3
 
 ### Disclaimer
@@ -68,5 +68,5 @@ Compatibility of `bevy_mod_physx` versions:
 | :--           | :--    |
 | `0.1`         | `0.10` |
 
-## License
-Todo
+<!-- ## License
+Todo -->
