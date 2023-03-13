@@ -4,6 +4,7 @@ description = "Bevy plugin for PhysX"
 repository = "https://github.com/MasterOfMarkets/bevy_mod_physx"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

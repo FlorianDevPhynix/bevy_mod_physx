@@ -19,6 +19,7 @@ use sync_bevy::*;
 mod handles;
 use handles::*;
 
+
 // mod debug_render;
 // use debug_render::*;
 
@@ -30,6 +31,12 @@ pub mod prelude {
     pub use crate::sync_bevy::*;
     pub use crate::sync_physx::*;
 }
+
+pub mod unsafe_handles {
+    pub use crate::handles::PxRigidActorHandle;
+}
+
+
 
 
 pub struct PhysXPlugin;
@@ -49,7 +56,7 @@ impl Plugin for PhysXPlugin {
                 new_static_actor, 
                 new_dyn_actor, 
                 new_articulation,
-            ).after(CoreSet::UpdateFlush).in_base_set(PhysXPipelineSet::BeforeFlush).chain())
+            ).in_base_set(PhysXPipelineSet::BeforeFlush).chain())
 
             .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush))
 
@@ -102,7 +109,7 @@ pub struct PhysX {
     foundation: PhysicsFoundation<physx::foundation::DefaultAllocator, PxShape>,
     scene: Owner<PxScene>,
     actor_to_entity: HashMap<*mut physx_sys::PxRigidActor, Entity>,
-    handles: Handels,
+    handles: Handels, 
 }
 unsafe impl Send for PhysX {}
 unsafe impl Sync for PhysX {}
@@ -131,6 +138,13 @@ impl PhysX {
         return PxRigidActorHandle(handle);
 
     }
+
+    // /// unsafe fuction to get a PxRigidActor from a PxRigidActorHandle
+    // pub unsafe fn get_rigid_actor(&self, handle: &PxRigidActorHandle) -> Option<&*mut physx_sys::PxRigidActor> {
+
+    //     return self.handles.rigid_actors.get(handle.0);
+
+    // }
     
     /// Raycast from origin in direction, returns entity, distance, position, normal
     /// returns None if no hit
