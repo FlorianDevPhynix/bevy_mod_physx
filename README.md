@@ -1,4 +1,8 @@
 # bevy_mod_physx
+
+[![crates.io](https://img.shields.io/crates/v/bevy_mod_physx.svg)](https://crates.io/crates/bevy_mod_physx)
+[![docs](https://docs.rs/bevy_mod_physx/badge.svg)](https://docs.rs/bevy_mod_physx)
+
 Bevy plugin for [NVIDIA PhysX](https://github.com/NVIDIA-Omniverse/PhysX) using  [EmbarkStudios rust bindings](https://github.com/EmbarkStudios/physx-rs).    
 Current PhysX version: 5.1.3
 
