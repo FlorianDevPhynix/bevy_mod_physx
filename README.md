@@ -39,6 +39,8 @@ pub fn setup(mut commands: Commands) {
 }
 ```
 
+For more example see [examples](https://github.com/MasterOfMarkets/bevy_mod_physx/tree/master/examples).
+
 ## Features
 * [x] Dynamic rigid bodies
 * [x] Static rigid bodies + PxPlanes
@@ -68,5 +70,7 @@ Compatibility of `bevy_mod_physx` versions:
 | :--           | :--    |
 | `0.1`         | `0.10` |
 
-<!-- ## License
-Todo -->
+## License
+[MIT](https://github.com/MasterOfMarkets/bevy_mod_physx/blob/master/LICENSE).
+
+Note that the [PhysX C++ SDK](https://github.com/NVIDIA-Omniverse/PhysX) has its [own BSD 3 license](https://nvidia-omniverse.github.io/PhysX/physx/5.1.3/docs/License.html) and depends on [additional C++ third party libraries](https://github.com/NVIDIA-Omniverse/PhysX/tree/release/104.2/physx#acknowledgements).
