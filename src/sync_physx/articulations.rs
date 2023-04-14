@@ -138,10 +138,13 @@ pub enum PxJointAxis {
 pub enum PxJointType {
     #[default]
     Fixed,
+    Prismatic,
+    Revolute,
+    RevoluteUnwrapped,
     Spherical,
 }
-
-
+ 
+ 
 #[derive(Default, Clone, Copy)]
 pub struct PxJointLimit {
     pub min: f32,
@@ -273,6 +276,9 @@ pub fn new_articulation_joint(
             //type
             match joint.joint_type {
                 PxJointType::Fixed => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Fix);},
+                PxJointType::Prismatic => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Prismatic);},
+                PxJointType::Revolute => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Revolute);},
+                PxJointType::RevoluteUnwrapped => {(*px_joint_reduced).set_joint_type(ArticulationJointType::RevoluteUnwrapped);},
                 PxJointType::Spherical => {(*px_joint_reduced).set_joint_type(ArticulationJointType::Spherical);},
             }
 
