@@ -51,6 +51,8 @@ impl Plugin for PhysXPlugin {
             .init_resource::<PhysXSettings>()
 
             //setup physx
+            .register_type::<PhysXFixedTime>()
+            .init_resource::<PhysXFixedTime>()
             .add_startup_system(setup_physx)
 
             //sync Physx
@@ -63,10 +65,13 @@ impl Plugin for PhysXPlugin {
 
             .add_system(apply_system_buffers.in_base_set(PhysXPipelineSet::Flush).after(PhysXPipelineSet::BeforeFlush))
 
+            .add_systems((
+                px_update_time,
+                update_gravity
+            ).in_base_set(PhysXPipelineSet::AfterFlush).after(PhysXPipelineSet::Flush))
             .add_systems(( //after flush
                 new_articulation_joint,
                 new_collider,
-                update_gravity,
                 // update_changed_transform,
                 update_mass_properties_system,
                 update_damping_system,
@@ -198,22 +203,41 @@ impl PhysX {
 
 }
 
+#[derive(Resource, Reflect)]
+pub struct PhysXFixedTime {
+    #[reflect_value]
+    pub step: f32
+}
 
-const PHYSXSTEP: f32 = 1.0 / 60.0;
+impl Default for PhysXFixedTime {
+    fn default() -> Self {
+        Self { step: 1.0 / 60.0 }
+    }
+}
+
+pub fn px_update_time(
+    bevy_time: Res<FixedTime>,
+    mut physx_time: ResMut<PhysXFixedTime>
+) {
+    if bevy_time.is_changed() {
+        physx_time.step = bevy_time.period.as_secs_f32();
+    }
+}
 
 //run physx
-fn px_step_simulation(   
+fn px_step_simulation(
     mut physx: ResMut<PhysX>,
     time: Res<Time>,
+    update: Res<PhysXFixedTime>,
     mut accumilator: Local<f32>,
 ){
 
     *accumilator += time.delta_seconds();
 
-    if *accumilator >= PHYSXSTEP {
-        *accumilator -= PHYSXSTEP;
+    if *accumilator >= update.step {
+        *accumilator -= update.step;
 
-        physx.scene.simulate(PHYSXSTEP, None, None);
+        physx.scene.simulate(update.step, None, None);
 
         physx.scene.fetch_results(true).expect("PhysX simulation failed");
     }
@@ -221,6 +245,7 @@ fn px_step_simulation(
 
 #[derive(Resource, Reflect)]
 pub struct PhysXSettings {
+    #[reflect_value]
     pub gravity: Vec3,
     /// can't be changed after PhysX initialization
     pub thread_count: u32,
